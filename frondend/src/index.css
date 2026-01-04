@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: emerald, nord, cupcake, pastel;
+}
+
+/* Daftarkan tema retro */
+/* @custom-variant retro (&:where([data-theme="retro"], [data-theme="retro"] *)); */
+/* @theme {
+  --color-primary: var(--p);
+} */
