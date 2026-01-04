@@ -9,19 +9,9 @@ import authMiddleware from "./middleware/authMiddleware.js";
 import examResultRoutes from "./routes/examResultRoutes.js";
 import guruRoutes from "./routes/guruRoutes.js";
 
-//lamaa
-// import soalRoutes from "./routes/soalRoutes.js";
-// import ujianRoutes from "./routes/ujianRoutes.js";
-
 dotenv.config();
 
 const app = express();
-//untuk chek rute error
-// app.use((req, res, next) => {
-//   console.log(`${req.method} ${req.url}`);
-//   next();
-// });
-//sampai sini untuk chek rute error
 
 app.use(cors());
 app.use(express.json());
@@ -35,12 +25,6 @@ app.use("/api/guru", authMiddleware, guruRoutes);
 
 //====end baruuu====
 
-// app.use("/api/ranking", authMiddleware, examRoutes);
-
-///lamaaa
-// app.use("/api/ujian", soalRoutes);
-// app.use("/api/ujian", ujianRoutes);
-
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
@@ -50,4 +34,8 @@ app.get("/", (req, res) => {
   res.send("Backend OK");
 });
 
-app.listen(5000, () => console.log("Server running on 5000"));
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

@@ -19,11 +19,6 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Password salah" });
     }
 
-    //sementara biar enak login nya, kalau final pakai yang atas
-    // if (password !== user.password) {
-    //   return res.status(400).json({ message: "Password salah" });
-    // }
-
     // === GENERATE TOKEN ===
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 

@@ -14,28 +14,9 @@ const shuffle = (arr) => {
 // ============================
 export const startExam = async (req, res) => {
   try {
-    //debuging
-    // console.log("DEBUG USER BARU:", req.user);
-    // console.log("DEBUG BODY:", req.body);
-    // if (!req.user || (!req.user._id && !req.user.id)) {
-    //   return res.status(401).json({ message: "Data user dalam token tidak lengkap" });
-    // }
-    //sampai sini debugging
-
     const userId = req.user.id;
     const { stage } = req.body;
 
-    //debuging
-    // if (!stage) {
-    //   return res.status(400).json({ message: "Stage ujian harus diisi" });
-    // }
-    //sampai sini debugging
-
-    // if (user.verifiedStage < stage) {
-    //   return res.status(403).json({
-    //     message: "Belum diverifikasi untuk tahap ini",
-    //   });
-    // }
     const existing = await ExamSession.findOne({
       user: userId,
       stage: stage,
