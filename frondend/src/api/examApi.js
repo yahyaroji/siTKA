@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   // kalau pakai develop di lokal,
-  baseURL: "http://localhost:5000/api",
+  baseURL: "http://127.0.0.1:5000/api",
   //dibawah ini nyobain online project lewat cloudflare tunnel
   // baseURL: "/api",
 });

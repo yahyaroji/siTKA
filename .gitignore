@@ -1,0 +1,12 @@
+# Mengabaikan node_modules di mana pun
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Mengabaikan env
+.env
+frontend/.env
+backend/.env
+
+# Mengabaikan file upload/excel
+backend/uploads/*.xlsx

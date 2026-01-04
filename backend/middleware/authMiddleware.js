@@ -1,16 +1,6 @@
 import jwt from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
-  //ditambahkan
-  // console.log("--- MASUK MIDDLEWARE ---");
-  // const authHeader = req.headers.authorization;
-
-  // if (!authHeader || !authHeader.startsWith("Bearer ")) {
-  //   console.log("Error: Header Authorization tidak valid");
-  //   return res.status(400).json({ message: "Format Header Auth Salah" });
-  // }
-  //sampai sini ditambahkan
-
   try {
     const token = req.headers.authorization?.split(" ")[1];
 
