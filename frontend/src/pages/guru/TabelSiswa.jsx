@@ -99,20 +99,6 @@ export default function TabelSiswa() {
     }
   };
 
-  // const handleExcelUpload = async (e) => {
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //   try {
-  //     await uploadSiswaExcel(formData);
-  //     alert("Import Excel Berhasil");
-  //     loadData();
-  //   } catch {
-  //     alert("Gagal upload Excel. Periksa format file.");
-  //   }
-  // };
-
   // --- LOGIKA FILTER & SORT (LAMA) ---
   const handleVerify = async (userId, stage, checked) => {
     try {
@@ -138,15 +124,6 @@ export default function TabelSiswa() {
     if (filterVerified === "unverified" && s.verifiedStage >= activeStage) return false;
     return true;
   });
-
-  // const sortedData = useMemo(() => {
-  //   if (sortSkor === "none") return filteredData;
-  //   return [...filteredData].sort((a, b) => {
-  //     const skorA = getResultByStage(a, activeStage)?.skor ?? 0;
-  //     const skorB = getResultByStage(b, activeStage)?.skor ?? 0;
-  //     return sortSkor === "desc" ? skorB - skorA : skorA - skorB;
-  //   });
-  // }, [filteredData, sortSkor, activeStage]);
 
   const sortedData = useMemo(() => {
     if (sortSkor === "none") return filteredData;
@@ -270,19 +247,6 @@ export default function TabelSiswa() {
             </button>
           ))}
         </div>
-
-        {/* <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => setShowModal(true)} style={{ padding: "8px 14px", background: "#4f46e5", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}>
-            + Siswa Manual
-          </button>
-          <label style={{ padding: "8px 14px", background: "#6366f1", color: "white", borderRadius: 6, cursor: "pointer" }}>
-            Import Excel
-            <input type="file" hidden onChange={handleExcelUpload} accept=".xlsx, .xls" />
-          </label>
-          <button onClick={downloadExcel} style={{ padding: "8px 16px", background: "#10b981", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: "bold" }}>
-            Export ke Excel
-          </button>
-        </div> */}
 
         <div>
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>

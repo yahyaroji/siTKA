@@ -1,6 +1,7 @@
 import { useState } from "react";
 import TabelSiswa from "./TabelSiswa";
 import TabelSoal from "./TabelSoal";
+import PreviewSoal from "./PreviewSoal";
 
 export default function DashboardGuru() {
   const [activeTab, setActiveTab] = useState("siswa");
@@ -31,11 +32,16 @@ export default function DashboardGuru() {
           <button onClick={() => setActiveTab("soal")} className={`tab tab-lg font-bold transition-all gap-2 ${activeTab === "soal" ? "tab-active !bg-emerald-500 !text-white" : ""}`}>
             📚 Bank Soal
           </button>
+          {/* Tab Baru */}
+          <button onClick={() => setActiveTab("preview")} className={`tab tab-lg font-bold transition-all gap-2 ${activeTab === "preview" ? "tab-active !bg-emerald-500 !text-white" : ""}`}>
+            🔍 Preview Soal
+          </button>
         </div>
 
         {/* RENDER KONTEN BERDASARKAN TAB */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {activeTab === "siswa" ? (
+          {/* Logika Tab Data Siswa */}
+          {activeTab === "siswa" && (
             <section className="space-y-4">
               <div className="flex items-center gap-2 mb-2 ml-1">
                 <div className="w-2 h-6 bg-emerald-500 rounded-full"></div>
@@ -47,7 +53,10 @@ export default function DashboardGuru() {
                 </div>
               </div>
             </section>
-          ) : (
+          )}
+
+          {/* Logika Tab Pengaturan Soal */}
+          {activeTab === "soal" && (
             <section className="space-y-4">
               <div className="flex items-center gap-2 mb-2 ml-1">
                 <div className="w-2 h-6 bg-emerald-500 rounded-full"></div>
@@ -56,6 +65,22 @@ export default function DashboardGuru() {
               <div className="card bg-white shadow-xl border border-base-300">
                 <div className="card-body p-0 md:p-6">
                   <TabelSoal />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Logika Tab Preview Soal (Halaman Baru Kamu) */}
+          {activeTab === "preview" && (
+            <section className="space-y-4">
+              <div className="flex items-center gap-2 mb-2 ml-1">
+                <div className="w-2 h-6 bg-emerald-500 rounded-full"></div>
+                <h2 className="text-xl font-bold text-emerald-900">Preview Tampilan Ujian</h2>
+              </div>
+              <div className="card bg-white shadow-xl border border-base-300">
+                <div className="card-body p-4 md:p-6">
+                  {/* Masukkan komponen BankSoalPage kamu di sini */}
+                  <PreviewSoal />
                 </div>
               </div>
             </section>

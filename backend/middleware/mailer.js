@@ -24,7 +24,7 @@ const sendAccountEmail = async (userEmail, nis, password) => {
           <p><strong>Username (NISN):</strong> ${nis}</p>
           <p><strong>Password:</strong> ${password}</p>
         </div>
-        <p>Silakan login melalui website resmi kami.</p>
+        <p>Silakan login melalui website resmi kami di https://smadipotryout.my.id</p>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
         <small style="color: #6b7280;">Jika kamu merasa tidak mendaftar, abaikan email ini.</small>
       </div>
