@@ -44,40 +44,35 @@ export default function DashboardSiswa() {
   }, [user]);
 
   const hasDoneStage = (stage) => results.some((r) => r.stage === stage);
-  const downloadSertifikat = (resultData) => {
+
+  const downloadSertifikat = () => {
     const doc = new jsPDF({
       orientation: "landscape",
       unit: "mm",
       format: "a4",
     });
 
-    // Sesuaikan path ini dengan nama file di folder public kamu
-    const imgData = "/public/template_sertif_stage1.png";
+    // Path gambar di folder public (tanpa kata public)
+    const imgData = "/template_sertif_stage1.png";
 
-    // 1. Tambahkan Background Template
+    // 1. Background Template
     doc.addImage(imgData, "PNG", 0, 0, 297, 210);
 
-    // 2. Nama Siswa (Rata Tengah)
+    // 2. Nama Siswa
+    const namaSiswa = profile?.nama_lengkap?.toUpperCase() || "";
+
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(30);
-    doc.setTextColor(6, 95, 70); // Warna Emerald gelap agar senada dengan tema
-    doc.text(profile?.nama_lengkap.toUpperCase(), 148, 95, { align: "center" });
+    doc.setFontSize(27); // Ukuran font
+    doc.setTextColor(0, 0, 0); // Warna hitam pekat agar elegan
 
-    // 3. Detail Nilai
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`${resultData.nilaiPerMapel?.bi || 0}`, 105, 130);
-    doc.text(`${resultData.nilaiPerMapel?.mtk || 0}`, 105, 140);
+    // Koordinat 148.5 adalah tengah-tengah kertas A4 Landscape
+    // Koordinat 118 adalah posisi tinggi
+    doc.text(namaSiswa, 148.5, 118, { align: "center" });
 
-    // 4. Info Tambahan (NIS & Tanggal)
-    doc.setFontSize(12);
-    doc.text(`NIS: ${profile?.nis}`, 148, 105, { align: "center" });
-    const tanggal = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
-    doc.text(`Diterbitkan pada: ${tanggal}`, 148, 160, { align: "center" });
-
-    // 5. Download
-    doc.save(`Sertifikat_TKA_Stage1_${profile?.nama_lengkap}.pdf`);
+    // 3. Download
+    doc.save(`Sertifikat_${namaSiswa}.pdf`);
   };
+
   const handleStart = async (stage) => {
     try {
       if (activeSession && activeSession.stage === stage) {
@@ -273,7 +268,7 @@ function StageCard({ stage, title, result, enabled, onStart, disabledText, activ
               {/* TOMBOL DOWNLOAD (Hanya muncul jika Stage 1 selesai) */}
               {stage === 1 && (
                 <button onClick={() => onDownload(result)} className="mt-3 btn btn-xs btn-outline btn-emerald text-emerald-700 normal-case">
-                  📜 Unduh Sertifikat Tahap 1
+                  📜 Unduh Sertifikat
                 </button>
               )}
             </div>
