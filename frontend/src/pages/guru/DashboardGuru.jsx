@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TabelSiswa from "./TabelSiswa";
 import TabelSoal from "./TabelSoal";
-import TabelSoal_copy from "./TabelSoal_copy";
 import PreviewSoal from "./PreviewSoal";
 
 export default function DashboardGuru() {
@@ -89,7 +88,7 @@ export default function DashboardGuru() {
               <div className="bg-white rounded-[2.5rem] shadow-saweria p-8 md:p-10 border border-white min-h-[500px]">
                 <div className="w-full">
                   {activeTab === "siswa" && <TabelSiswa />}
-                  {activeTab === "soal" && <TabelSoal_copy />}
+                  {activeTab === "soal" && <TabelSoal />}
                   {activeTab === "preview" && <PreviewSoal />}
                 </div>
               </div>
