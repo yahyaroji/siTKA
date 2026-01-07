@@ -60,7 +60,7 @@ export default function UjianPage() {
         setLoading(true); // Pastikan loading dimulai
 
         // --- SIMULASI LOADING (Hapus bagian ini kalau sudah selesai testing) ---
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // await new Promise((resolve) => setTimeout(resolve, 500));
         // -----------------------------------------------------------------------
 
         const res = await api.get(`exam/session/${sessionId}/soal`);
@@ -534,6 +534,23 @@ export default function UjianPage() {
             <button disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className="btn btn-outline btn-primary px-8">
               ← Prev
             </button>
+
+            {/* Progress Bar Center */}
+            <div className="grow max-w-md w-full px-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[10px] uppercase tracking-[0.2em] font-black opacity-40 mx-auto">PROGRES PENGERJAAN SOAL</span>
+              </div>
+              <div className="relative w-full h-3 bg-emerald-100 rounded-full overflow-hidden shadow-inner border border-emerald-200">
+                <div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-700 ease-out"
+                  style={{ width: `${((current + 1) / soal.length) * 100}%` }}
+                >
+                  {/* Efek kilau pada progress */}
+                  <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.2)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.2)_75%,transparent_75%,transparent)] bg-[length:20px_20px] opacity-20 animate-[shimmer_2s_linear_infinite]"></div>
+                </div>
+              </div>
+            </div>
+
             <button disabled={current === soal.length - 1} onClick={() => setCurrent((c) => c + 1)} className="btn btn-primary px-10 text-white shadow-md">
               Next →
             </button>

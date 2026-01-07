@@ -179,7 +179,7 @@ export const submitExam = async (req, res) => {
           const valKunci = String(kunci[key] || "")
             .trim()
             .toLowerCase();
-          if (user[key] === kunci[key]) subBenar++;
+          if (valUser === valKunci) subBenar++;
         });
 
         rasioSoalIni = keys.length > 0 ? subBenar / keys.length : 0;
@@ -194,7 +194,7 @@ export const submitExam = async (req, res) => {
           rasioSoalIni = 0;
         } else {
           let benarCount = 0;
-          let adaSalah = false;
+          // let adaSalah = false;
 
           // Normalisasi kunci ke lowercase untuk pengecekan
           const lowKunci = kunciArr.map((k) => String(k).trim().toLowerCase());
@@ -202,12 +202,11 @@ export const submitExam = async (req, res) => {
           userArr.forEach((val) => {
             if (lowKunci.includes(String(val).trim().toLowerCase())) {
               benarCount++;
-            } else {
-              adaSalah = true;
             }
           });
-
-          rasioSoalIni = adaSalah ? 0 : kunciArr.length > 0 ? benarCount / kunciArr.length : 0;
+          // Menghitung rasio, tapi dikunci maksimal di angka 1
+          rasioSoalIni = kunciArr.length > 0 ? Math.min(1, benarCount / kunciArr.length) : 0;
+          // rasioSoalIni = kunciArr.length > 0 ? benarCount / kunciArr.length : 0;
         }
       } else {
         // Pilihan Ganda Biasa

@@ -10,6 +10,7 @@ import UjianPage from "./pages/siswa/UjianPage";
 // import HasilPage from "./pages/siswa/HasilPage";
 
 import DashboardGuru from "./pages/guru/DashboardGuru";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -56,7 +57,7 @@ export default function App() {
             }
           />
 
-          <Route path="*" element={<h1>404 - Halaman tidak ditemukan</h1>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

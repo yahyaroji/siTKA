@@ -1,90 +1,81 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TabelSiswa from "./TabelSiswa";
 import TabelSoal from "./TabelSoal";
 import PreviewSoal from "./PreviewSoal";
 
 export default function DashboardGuru() {
   const [activeTab, setActiveTab] = useState("siswa");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    if (window.confirm("Yakin mau keluar?")) {
+      localStorage.clear();
+      navigate("/login");
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-base-200">
-      {/* HEADER GURU */}
-      <div className="bg-emerald-800 text-white pt-10 pb-20 px-6">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
+    // Gunakan tema "light" dan font sans yang tegas
+    <div data-theme="light" className="min-h-screen bg-white text-black font-sans selection:bg-yellow-300">
+      {/* HEADER: Bold & Minimalist (Gaya Dunderville) */}
+      <div className="bg-white border-b-8 border-black pt-16 pb-12 px-6">
+        <div className="max-w-6xl mx-auto flex justify-between items-end">
           <div>
-            <h1 className="text-3xl font-black tracking-tight">Dashboard Guru</h1>
-            <p className="opacity-70 mt-1">Kelola data siswa dan bank soal dalam satu tempat.</p>
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none uppercase">
+              Guru
+              <br />
+              Space.
+            </h1>
+            <p className="text-xl font-bold mt-4 tracking-tight opacity-40 uppercase">Management Dashboard / 2024</p>
           </div>
-          {/* <div className="hidden md:block text-right">
-            <p className="text-sm font-bold opacity-50 uppercase">Tahun Ajaran</p>
-            <p className="text-xl font-bold">2024/2025</p>
-          </div> */}
+          <button onClick={handleLogout} className="border-4 border-black px-6 py-2 font-black hover:bg-red-500 hover:text-white transition-all uppercase tracking-widest text-sm">
+            Logout
+          </button>
         </div>
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="max-w-6xl mx-auto -mt-10 px-6 pb-12">
-        {/* NAVIGASI TAB */}
-        <div className="tabs tabs-boxed bg-white p-2 shadow-lg mb-6 inline-flex border border-base-300">
-          <button onClick={() => setActiveTab("siswa")} className={`tab tab-lg font-bold transition-all gap-2 ${activeTab === "siswa" ? "tab-active !bg-emerald-500 !text-white" : ""}`}>
-            👥 Data Siswa
-          </button>
-          <button onClick={() => setActiveTab("soal")} className={`tab tab-lg font-bold transition-all gap-2 ${activeTab === "soal" ? "tab-active !bg-emerald-500 !text-white" : ""}`}>
-            📚 Bank Soal
-          </button>
-          {/* Tab Baru */}
-          <button onClick={() => setActiveTab("preview")} className={`tab tab-lg font-bold transition-all gap-2 ${activeTab === "preview" ? "tab-active !bg-emerald-500 !text-white" : ""}`}>
-            🔍 Preview Soal
-          </button>
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* NAVIGASI TAB: Gaya Brutalist */}
+        <div className="flex flex-wrap gap-2 mb-12">
+          {[
+            { id: "siswa", label: "Data Siswa", icon: "👥" },
+            { id: "soal", label: "Bank Soal", icon: "📚" },
+            { id: "preview", label: "Preview", icon: "🔍" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-8 py-4 font-black uppercase tracking-widest transition-all border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 ${
+                activeTab === tab.id ? "bg-black text-white" : "bg-white text-black"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* RENDER KONTEN BERDASARKAN TAB */}
+        {/* CONTENT AREA: Tanpa Card Shadow Emerald lagi */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Logika Tab Data Siswa */}
-          {activeTab === "siswa" && (
-            <section className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 ml-1">
-                <div className="w-2 h-6 bg-emerald-500 rounded-full"></div>
-                <h2 className="text-xl font-bold text-emerald-900">Manajemen Siswa</h2>
-              </div>
-              <div className="card bg-white shadow-xl border border-base-300">
-                <div className="card-body p-0 md:p-6">
-                  <TabelSiswa />
-                </div>
-              </div>
-            </section>
-          )}
+          {/* Section Wrapper */}
+          <section>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="h-12 w-4 bg-black"></div>
+              <h2 className="text-4xl font-black uppercase tracking-tighter">
+                {activeTab === "siswa" && "Manajemen Siswa"}
+                {activeTab === "soal" && "Pengaturan Soal"}
+                {activeTab === "preview" && "Preview Tampilan"}
+              </h2>
+            </div>
 
-          {/* Logika Tab Pengaturan Soal */}
-          {activeTab === "soal" && (
-            <section className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 ml-1">
-                <div className="w-2 h-6 bg-emerald-500 rounded-full"></div>
-                <h2 className="text-xl font-bold text-emerald-900">Pengaturan Soal</h2>
-              </div>
-              <div className="card bg-white shadow-xl border border-base-300">
-                <div className="card-body p-0 md:p-6">
-                  <TabelSoal />
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Logika Tab Preview Soal (Halaman Baru Kamu) */}
-          {activeTab === "preview" && (
-            <section className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 ml-1">
-                <div className="w-2 h-6 bg-emerald-500 rounded-full"></div>
-                <h2 className="text-xl font-bold text-emerald-900">Preview Tampilan Ujian</h2>
-              </div>
-              <div className="card bg-white shadow-xl border border-base-300">
-                <div className="card-body p-4 md:p-6">
-                  {/* Masukkan komponen BankSoalPage kamu di sini */}
-                  <PreviewSoal />
-                </div>
-              </div>
-            </section>
-          )}
+            {/* Container Konten: Garis tebal dan bersih */}
+            <div className="border-4 border-black p-1 md:p-8 bg-white min-h-[400px]">
+              {activeTab === "siswa" && <TabelSiswa />}
+              {activeTab === "soal" && <TabelSoal />}
+              {activeTab === "preview" && <PreviewSoal />}
+            </div>
+          </section>
         </div>
       </div>
     </div>

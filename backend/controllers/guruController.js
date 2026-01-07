@@ -61,7 +61,9 @@ export const getSiswaWithResult = async (req, res) => {
       return res.status(403).json({ message: "Akses ditolak" });
     }
     // 1. ambil semua siswa
-    const siswaList = await User.find({ role: "siswa" }).select("-password").lean();
+    // const siswaList = await User.find({ role: "siswa" }).select("-password").lean();
+    //filter dihilangkan untuk menyatukan tabel data siswa dan guru
+    const siswaList = await User.find().select("-password").lean();
 
     // 2. ambil semua result
     const results = await ExamResult.find().select("user stage skor nilaiPerMapel").lean();
