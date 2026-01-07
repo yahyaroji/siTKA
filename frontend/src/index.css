@@ -1,10 +1,33 @@
+/* 3. Tambahkan Import Font Google */
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap");
+
 @import "tailwindcss";
-@plugin "daisyui" {
-  themes: emerald, nord, cupcake, pastel;
+
+/* 1. Definisikan Font dan Variable Global di @theme */
+@theme {
+  --font-saweria: "Plus Jakarta Sans", sans-serif;
+
+  /* Shadow khas */
+  --shadow-saweria: 0 10px 0px -2px rgba(0, 0, 0, 0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* Definisikan warna manual jika daisyUI tidak terbaca di v4 CSS-only mode */
+  --color-primary: #ffd600;
+  --color-secondary: #1a1a1a;
 }
 
-/* Daftarkan tema retro */
-/* @custom-variant retro (&:where([data-theme="retro"], [data-theme="retro"] *)); */
-/* @theme {
-  --color-primary: var(--p);
-} */
+/* 2. Konfigurasi Plugin daisyUI */
+/* Di Tailwind v4, lebih aman mendaftarkan tema kustom lewat file konfigurasi JS, 
+   tapi jika ingin di CSS, pastikan tidak ada typo atau koma ganda */
+@plugin "daisyui" {
+  themes: emerald, nord, cupcake, pastel, gurudash;
+}
+
+/* 4. Utility tambahan */
+@utility font-saweria {
+  font-family: var(--font-saweria);
+}
+
+@utility shadow-saweria {
+  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(0, 0, 0, 0.05);
+}

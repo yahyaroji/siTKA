@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TabelSiswa from "./TabelSiswa";
 import TabelSoal from "./TabelSoal";
+import TabelSoal_copy from "./TabelSoal_copy";
 import PreviewSoal from "./PreviewSoal";
 
 export default function DashboardGuru() {
@@ -16,68 +17,92 @@ export default function DashboardGuru() {
   };
 
   return (
-    // Gunakan tema "light" dan font sans yang tegas
-    <div data-theme="light" className="min-h-screen bg-white text-black font-sans selection:bg-yellow-300">
-      {/* HEADER: Bold & Minimalist (Gaya Dunderville) */}
-      <div className="bg-white border-b-8 border-black pt-16 pb-12 px-6">
-        <div className="max-w-6xl mx-auto flex justify-between items-end">
-          <div>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none uppercase">
-              Guru
-              <br />
-              Space.
-            </h1>
-            <p className="text-xl font-bold mt-4 tracking-tight opacity-40 uppercase">Management Dashboard / 2024</p>
-          </div>
-          <button onClick={handleLogout} className="border-4 border-black px-6 py-2 font-black hover:bg-red-500 hover:text-white transition-all uppercase tracking-widest text-sm">
-            Logout
-          </button>
-        </div>
-      </div>
+    <>
+      {/* Import font lokal */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
+        /* Custom Shadow agar konsisten */
+        .shadow-saweria {
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+      `}</style>
 
-      {/* MAIN CONTENT */}
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        {/* NAVIGASI TAB: Gaya Brutalist */}
-        <div className="flex flex-wrap gap-2 mb-12">
-          {[
-            { id: "siswa", label: "Data Siswa", icon: "👥" },
-            { id: "soal", label: "Bank Soal", icon: "📚" },
-            { id: "preview", label: "Preview", icon: "🔍" },
-          ].map((tab) => (
+      <div data-theme="gurudash" className="min-h-screen bg-[#F4F4F4] text-black font-['Plus_Jakarta_Sans'] selection:bg-[#FFD600]/30">
+        {/* HEADER: Kuning Ikonik */}
+        <div className="bg-[#FFD600] pt-20 pb-16 px-6 border-b-4 border-black shadow-lg">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="bg-black text-[#FFD600] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">ADMIN Area</span>
+              </div>
+              <h1 className="text-6xl md:text-7xl font-[800] tracking-tighter leading-none text-black">
+                Teacher's<span className="opacity-20 text-black">Space.</span>
+              </h1>
+              <p className="text-lg font-bold mt-3 tracking-tight text-black/60">Manage your students & assignments</p>
+            </div>
+
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-8 py-4 font-black uppercase tracking-widest transition-all border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 ${
-                activeTab === tab.id ? "bg-black text-white" : "bg-white text-black"
-              }`}
+              onClick={handleLogout}
+              className="bg-black text-white px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-gray-800 hover:scale-105 transition-all shadow-2xl active:scale-95"
             >
-              {tab.label}
+              Logout
             </button>
-          ))}
+          </div>
         </div>
 
-        {/* CONTENT AREA: Tanpa Card Shadow Emerald lagi */}
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Section Wrapper */}
-          <section>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="h-12 w-4 bg-black"></div>
-              <h2 className="text-4xl font-black uppercase tracking-tighter">
-                {activeTab === "siswa" && "Manajemen Siswa"}
-                {activeTab === "soal" && "Pengaturan Soal"}
-                {activeTab === "preview" && "Preview Tampilan"}
-              </h2>
-            </div>
+        {/* MAIN CONTENT AREA */}
+        <div className="max-w-6xl mx-auto px-6 -mt-8">
+          {/* NAVIGASI TAB: Pill Style dengan Shadow 3D */}
+          <div className="flex flex-wrap gap-4 mb-10 bg-white p-3 rounded-[2rem] shadow-xl border border-gray-100 inline-flex">
+            {[
+              { id: "siswa", label: "Students", icon: "👥" },
+              { id: "soal", label: "Questions", icon: "📚" },
+              { id: "preview", label: "Preview", icon: "🔍" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-8 py-4 rounded-[1.2rem] font-extrabold text-sm uppercase tracking-tight transition-all ${
+                  activeTab === tab.id ? "bg-[#FFD600] text-black shadow-[0_6px_0_0_#000] -translate-y-1" : "bg-transparent text-gray-400 hover:bg-gray-50 hover:text-black"
+                }`}
+              >
+                <span className="text-lg">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-            {/* Container Konten: Garis tebal dan bersih */}
-            <div className="border-4 border-black p-1 md:p-8 bg-white min-h-[400px]">
-              {activeTab === "siswa" && <TabelSiswa />}
-              {activeTab === "soal" && <TabelSoal />}
-              {activeTab === "preview" && <PreviewSoal />}
-            </div>
-          </section>
+          {/* CONTENT SECTION */}
+          <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <section>
+              <div className="flex items-center gap-4 mb-8 ml-2">
+                <div className="h-10 w-3 bg-[#FFD600] rounded-full shadow-[2px_2px_0_0_#000]"></div>
+                <h2 className="text-3xl font-[800] text-black tracking-tighter uppercase">
+                  {activeTab === "siswa" && "Students"}
+                  {activeTab === "soal" && "Questions"}
+                  {activeTab === "preview" && "Preview"}
+                </h2>
+              </div>
+
+              {/* Kontainer Utama Tabel */}
+              <div className="bg-white rounded-[2.5rem] shadow-saweria p-8 md:p-10 border border-white min-h-[500px]">
+                <div className="w-full">
+                  {activeTab === "siswa" && <TabelSiswa />}
+                  {activeTab === "soal" && <TabelSoal_copy />}
+                  {activeTab === "preview" && <PreviewSoal />}
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* FOOTER */}
+          <footer className="py-16 text-center">
+            <div className="h-[1px] w-20 bg-black/10 mx-auto mb-6"></div>
+            <p className="text-[10px] font-black tracking-[0.3em] opacity-30 uppercase">Academic Dashboard © 2024 • Built for Teachers</p>
+          </footer>
         </div>
       </div>
-    </div>
+    </>
   );
 }

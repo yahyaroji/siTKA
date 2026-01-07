@@ -319,494 +319,617 @@ export default function TabelSoal() {
   // end helper untuk togle jawaban
 
   return (
-    <div>
-      {/* modal untuk upload soal excel */}
-      {showUploadModal && (
-        <div>
-          <div>
-            <h3>Upload Soal via Excel</h3>
+    <div className="p-4 bg-white min-h-screen">
+      {/* HEADER DASHBOARD */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
+        <div className="flex items-center gap-4">
+          {/* <div className="w-2 h-10 bg-[#FFD600] rounded-full border-2 border-black"></div> */}
+          {/* <h1 className="text-3xl font-black uppercase tracking-tighter text-black">Manajemen Bank Soal</h1> */}
+        </div>
 
-            <input type="file" accept=".xlsx,.xls" onChange={(e) => setExcelFile(e.target.files[0])} />
+        <div className="flex items-center gap-4">
+          {/* Tombol Tambah - Hitam Kuning */}
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="bg-[#2196f3] text-white px-6 py-3 rounded-2xl border-[3px] border-black font-black text-[10px] uppercase tracking-widest shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+          >
+            + ADD QUESTION
+          </button>
 
-            <div style={{ marginTop: 10 }}>
-              <button onClick={handleUploadExcel} disabled={!excelFile || uploading}>
-                {uploading ? "Uploading..." : "Upload"}
-              </button>
+          {/* Tombol Import - Biru Saweria biar senada sama Preview */}
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="bg-[#FFD600] text-black px-6 py-3 rounded-2xl border-[3px] border-black font-black text-[10px] uppercase tracking-widest shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+          >
+            IMPORT EXCEL
+          </button>
+        </div>
+      </div>
+      {/* END HEADER DASHBOARD */}
 
-              <button
-                onClick={() => {
-                  setShowUploadModal(false);
-                  setExcelFile(null);
-                }}
-                style={{ marginLeft: 10 }}
-              >
-                Batal
-              </button>
-            </div>
+      {/* FILTER SECTION - Neo-Brutal Upgrade */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 bg-white p-8 rounded-[2.5rem] border-[3px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+        {/* Filter Mapel */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2 ml-2">
+            <div className="w-1.5 h-4 bg-[#2196f3] rounded-full border border-black"></div>
+            <span className="text-[10px] font-black text-black uppercase tracking-[0.2em]">Subjects</span>
+          </div>
+          <select
+            className="bg-white border-[3px] border-black rounded-2xl px-4 py-3 font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all cursor-pointer"
+            value={mapel}
+            onChange={(e) => setMapel(e.target.value)}
+          >
+            <option value="">ALL SUBJECTS</option>
+            <option value="bi">INDONESIAN</option>
+            <option value="mtk">MATHEMATICS</option>
+          </select>
+        </div>
+
+        {/* Filter Stage */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2 ml-2">
+            <div className="w-1.5 h-4 bg-[#FFD600] rounded-full border border-black"></div>
+            <span className="text-[10px] font-black text-black uppercase tracking-[0.2em]">Stages</span>
+          </div>
+          <select
+            className="bg-white border-[3px] border-black rounded-2xl px-4 py-3 font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all cursor-pointer"
+            value={stage}
+            onChange={(e) => setStage(e.target.value)}
+          >
+            <option value="">ALL STAGES</option>
+            <option value="1">STAGE 1</option>
+            <option value="2">STAGE 2</option>
+            <option value="3">STAGE 3</option>
+          </select>
+        </div>
+
+        {/* Info Counter */}
+        <div className="flex flex-col justify-end items-end pb-1">
+          <div className="bg-gray-100 border-2 border-black px-4 py-2 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <p className="text-[10px] font-black text-black uppercase tracking-widest">
+              Total: <span className="text-[#2196f3] text-lg ml-1">{data.length}</span> Questions
+            </p>
           </div>
         </div>
-      )}
+      </div>
+      {/* END FILTER SECTION */}
 
-      {/* end modal untuk upload soal excel */}
+      {/* TABLE AREA */}
+      <div className="bg-white rounded-[2.5rem] border-[3px] border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+        {/* Tambahkan table-fixed supaya lebar kolom yang kita set dipatuhi si browser */}
+        <table className="table w-full border-collapse table-fixed">
+          <thead>
+            <tr className="bg-black text-white border-b-[3px] border-black">
+              <th className="p-6 font-black uppercase text-[10px] tracking-[0.2em] text-center w-24">Stage</th>
+              <th className="p-6 font-black uppercase text-[10px] tracking-[0.2em] w-40">Subject</th>
+              <th className="p-6 font-black uppercase text-[10px] tracking-[0.2em]">Question</th>
+              {/* Kita kasih pr-12 (padding kanan) biar tulisan AKSI gak nempel ke pojokan melengkung */}
+              <th className="p-6 pr-12 font-black uppercase text-[10px] tracking-[0.2em] text-center  w-52">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y-[3px] divide-gray-100">
+            {data.map((s) => (
+              <tr key={s._id} className="hover:bg-blue-50/30 transition-colors group">
+                <td className="p-5 text-center">
+                  <span className="inline-block whitespace-nowrap font-mono font-black px-4 py-2 bg-[#FFD600] text-black border-[2px] border-black rounded-xl text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    S-{s.stage}
+                  </span>
+                </td>
 
-      {/* form tambah soal dibuat modal */}
-      {showAddForm && (
-        <div style={{ border: "2px solid #3b82f6", padding: "20px", borderRadius: "12px", marginBottom: "30px", backgroundColor: "#fff", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}>
-          <h3 style={{ color: "#1e40af", marginTop: 0 }}>Tambah Soal Baru</h3>
+                <td className="p-5">
+                  <span className="inline-block font-black text-[10px] uppercase tracking-widest text-[#2196f3] bg-blue-50 px-4 py-1.5 rounded-full border-2 border-blue-100">
+                    {s.mapel === "bi" ? "BI" : "Math"}
+                  </span>
+                </td>
 
-          {/* Pilihan Tipe Soal */}
-          <div style={{ marginBottom: "15px", display: "flex", alignItems: "center", gap: "10px" }}>
-            <label style={{ fontWeight: "bold" }}>Tipe Soal: </label>
-            <select
-              style={{ padding: "5px", borderRadius: "4px" }}
-              value={addForm.isMatrix ? "matrix" : "standar"}
-              onChange={(e) => setAddForm({ ...addForm, isMatrix: e.target.value === "matrix", jawaban: "" })}
-            >
-              <option value="standar">Pilihan Ganda / Multiple</option>
-              <option value="matrix">Matrix (Tabel)</option>
-            </select>
-          </div>
-
-          <textarea
-            placeholder="Tulis Pertanyaan di sini..."
-            style={{ width: "100%", minHeight: "80px", marginBottom: "10px", padding: "10px", borderRadius: "8px", border: "1px solid #ccc" }}
-            value={addForm.pertanyaan}
-            onChange={(e) => setAddForm({ ...addForm, pertanyaan: e.target.value })}
-          />
-
-          <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: "12px", fontWeight: "bold" }}>Mata Pelajaran</label>
-              <select style={{ width: "100%", padding: "8px" }} value={addForm.mapel} onChange={(e) => setAddForm({ ...addForm, mapel: e.target.value })}>
-                <option value="bi">Bahasa Indonesia</option>
-                <option value="mtk">Matematika</option>
-              </select>
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: "12px", fontWeight: "bold" }}>Stage</label>
-              <select style={{ width: "100%", padding: "8px" }} value={addForm.stage} onChange={(e) => setAddForm({ ...addForm, stage: Number(e.target.value) })}>
-                <option value={1}>Stage 1</option>
-                <option value={2}>Stage 2</option>
-                <option value={3}>Stage 3</option>
-              </select>
-            </div>
-          </div>
-
-          <hr style={{ border: "0.5px solid #eee", marginBottom: "20px" }} />
-
-          {/* --- INPUT DINAMIS --- */}
-          {addForm.isMatrix ? (
-            /* UI UNTUK MATRIX */
-            <div style={{ background: "#f8fafc", padding: "15px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "#475569" }}>Konfigurasi Matrix</h4>
-              <label style={{ fontSize: "11px", fontWeight: "bold" }}>Kolom Kategori (Pisahkan dengan ; )</label>
-              <input
-                placeholder="Contoh: Benar;Salah"
-                style={{ width: "100%", padding: "8px", marginBottom: "10px", borderRadius: "4px", border: "1px solid #cbd5e1" }}
-                value={addForm.columns}
-                onChange={(e) => setAddForm({ ...addForm, columns: e.target.value })}
-              />
-
-              <label style={{ fontSize: "11px", fontWeight: "bold" }}>Daftar Pernyataan (Pisahkan dengan ; )</label>
-              <textarea
-                placeholder="Contoh: Matahari terbit dari timur;Ikan bernapas dengan paru-paru"
-                style={{ width: "100%", padding: "8px", minHeight: "60px", borderRadius: "4px", border: "1px solid #cbd5e1" }}
-                value={addForm.sub_pertanyaan}
-                onChange={(e) => setAddForm({ ...addForm, sub_pertanyaan: e.target.value })}
-              />
-
-              {/* Visual Selector Kunci Matrix */}
-              {addForm.columns && addForm.sub_pertanyaan && (
-                <div style={{ marginTop: "15px", backgroundColor: "#fff", padding: "10px", borderRadius: "6px", border: "1px dashed #cbd5e1" }}>
-                  <p style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "10px" }}>Pilih Kunci Jawaban:</p>
-                  {addForm.sub_pertanyaan.split(";").map((p, pIdx) => (
-                    <div key={pIdx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", gap: "10px" }}>
-                      <span style={{ fontSize: "12px", color: "#64748b", flex: 1 }}>{p || `Pernyataan ${pIdx + 1}`}</span>
-                      <div style={{ display: "flex", gap: "5px" }}>
-                        {addForm.columns.split(";").map((col, cIdx) => (
-                          <button
-                            key={cIdx}
-                            type="button"
-                            onClick={() => {
-                              let jawArr = addForm.jawaban.split(";");
-                              while (jawArr.length < addForm.sub_pertanyaan.split(";").length) jawArr.push("");
-                              jawArr[pIdx] = col;
-                              setAddForm({ ...addForm, jawaban: jawArr.join(";") });
-                            }}
-                            style={{
-                              padding: "4px 10px",
-                              fontSize: "11px",
-                              cursor: "pointer",
-                              borderRadius: "4px",
-                              border: "1px solid #e2e8f0",
-                              backgroundColor: addForm.jawaban.split(";")[pIdx] === col ? "#10b981" : "#f1f5f9",
-                              color: addForm.jawaban.split(";")[pIdx] === col ? "white" : "#1e293b",
-                            }}
-                          >
-                            {col}
-                          </button>
-                        ))}
-                      </div>
+                <td className="p-5 text-left">
+                  <div className="flex flex-col gap-1">
+                    <p className="font-medium text-black leading-relaxed line-clamp-2 text-sm uppercase italic opacity-80">{s.pertanyaan.replace(/@@/g, " ").replace(/\|/g, " ")}</p>
+                    <div className="flex gap-2">
+                      {s.isMatrix && <span className="text-[8px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-widest">Matrix</span>}
+                      {s.multiple && <span className="text-[8px] font-black text-purple-600 bg-purple-50 px-2 py-0.5 rounded border border-purple-100 uppercase tracking-widest">Multiple</span>}
                     </div>
-                  ))}
+                  </div>
+                </td>
+
+                {/* SAMA DENGAN HEADER: Kasih pr-12 dan text-right supaya menjauh dari lengkungan pojok */}
+                <td className="p-5 pr-12">
+                  <div className="flex justify-end items-center gap-4">
+                    <button onClick={() => handleEdit(s)} className="font-black text-[10px] uppercase tracking-[0.15em] text-black hover:text-[#2196f3]">
+                      EDIT
+                    </button>
+                    <div className="w-[1.5px] h-4 bg-black/20"></div>
+                    <button onClick={() => handleDelete(s._id)} className="font-black text-[10px] uppercase tracking-[0.15em] text-red-500 hover:text-red-700 transition-all hover:scale-110">
+                      DELETE
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/* END TABLE AREA */}
+
+      {/* ----------------MODAL------------- */}
+
+      {/* modal upload soal excel */}
+      {showUploadModal && (
+        /* Tambahkan overflow-y-auto dan hapus items-center */
+        <div className="fixed inset-0 z-999 bg-black/40 backdrop-blur-sm overflow-y-auto overflow-x-hidden">
+          {/* Gunakan items-start dan py-12 agar posisi konsisten dengan modal lainnya */}
+          <div className="flex min-h-screen items-start justify-center p-4 py-12">
+            <div className="bg-white w-full max-w-md p-8 rounded-[2.5rem] border-[3px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] relative transition-all animate-in fade-in zoom-in duration-200">
+              {/* Header Modal */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-2 h-8 bg-[#FFD600] rounded-full border-2 border-black"></div>
+                <h3 className="text-xl font-black uppercase tracking-tighter">Upload Soal Excel</h3>
+              </div>
+
+              <p className="text-xs font-medium text-gray-500 mb-6 leading-relaxed">
+                Pilih file format <span className="font-bold text-black">.xlsx</span> atau <span className="font-bold text-black">.xls</span>. Pastikan format kolom sudah sesuai template.
+              </p>
+
+              {/* Custom Input File Area */}
+              <div className="relative group">
+                <input type="file" accept=".xlsx,.xls" onChange={(e) => setExcelFile(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                <div className="border-2 border-dashed border-gray-200 group-hover:border-black transition-colors rounded-2xl p-8 flex flex-col items-center justify-center gap-2 bg-gray-50">
+                  <span className="text-2xl">📊</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">{excelFile ? excelFile.name : "Klik atau seret file ke sini"}</span>
                 </div>
-              )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-8 flex flex-col gap-3">
+                <button
+                  onClick={handleUploadExcel}
+                  disabled={!excelFile || uploading}
+                  className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1
+            ${!excelFile || uploading ? "bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed" : "bg-[#FFD600] text-black hover:bg-[#ffe033]"}`}
+                >
+                  {uploading ? "Sabar ya, lagi di-upload..." : "Konfirmasi Upload"}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowUploadModal(false);
+                    setExcelFile(null);
+                  }}
+                  className="w-full py-3 font-black text-[10px] uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors"
+                >
+                  Batalkan Proses
+                </button>
+              </div>
             </div>
-          ) : (
-            /* UI UNTUK PILIHAN GANDA / MULTIPLE */
-            <div style={{ background: "#f0f9ff", padding: "15px", borderRadius: "8px", border: "1px solid #bae6fd" }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "#0369a1" }}>Opsi Jawaban</h4>
-              <p style={{ fontSize: "11px", color: "#0c4a6e", marginBottom: "10px" }}>*Isi teks opsi, lalu klik lingkaran/kotak untuk jadi kunci.</p>
-
-              {addForm.opsi.map((op, idx) => (
-                <div key={idx} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                  <input
-                    type={addForm.multiple ? "checkbox" : "radio"}
-                    name="kunci_add"
-                    style={{ width: "18px", height: "18px", cursor: "pointer" }}
-                    checked={addForm.jawaban.split(";").includes(op) && op.trim() !== ""}
-                    onChange={() => toggleJawabanSelection(addForm, setAddForm, op)}
-                  />
-                  <input
-                    style={{ flex: 1, padding: "8px", borderRadius: "4px", border: "1px solid #cbd5e1" }}
-                    placeholder={`Teks Opsi ${String.fromCharCode(65 + idx)}`}
-                    value={op}
-                    onChange={(e) => {
-                      const newOpsi = [...addForm.opsi];
-                      newOpsi[idx] = e.target.value;
-                      setAddForm({ ...addForm, opsi: newOpsi });
-                    }}
-                  />
-                </div>
-              ))}
-
-              <label style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "15px", cursor: "pointer" }}>
-                <input type="checkbox" style={{ width: "16px", height: "16px" }} checked={addForm.multiple} onChange={(e) => setAddForm({ ...addForm, multiple: e.target.checked, jawaban: "" })} />
-                <span style={{ fontWeight: "bold", fontSize: "13px", color: "#0369a1" }}>Mode Jawaban Kompleks (Multiple)</span>
-              </label>
-            </div>
-          )}
-
-          {/* Ringkasan Kunci Jawaban (Otomatis) */}
-          <div style={{ marginTop: "20px", padding: "12px", background: "#f1f5f9", borderRadius: "6px", border: "1px dashed #cbd5e1" }}>
-            <label style={{ fontSize: "12px", fontWeight: "bold", color: "#475569" }}>Kunci Jawaban yang tersimpan:</label>
-            <div style={{ color: "#2563eb", fontWeight: "bold", fontSize: "14px", marginTop: "4px" }}>
-              {addForm.jawaban || <span style={{ color: "#94a3b8", fontWeight: "normal" }}>Belum ada kunci dipilih</span>}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div style={{ marginTop: "25px", display: "flex", justifyContent: "flex-end", gap: "10px" }}>
-            <button onClick={() => setShowAddForm(false)} style={{ padding: "8px 20px", borderRadius: "6px", border: "1px solid #ccc", background: "white", cursor: "pointer" }}>
-              Batal
-            </button>
-            <button onClick={handleCreate} style={{ padding: "8px 25px", borderRadius: "6px", border: "none", background: "#2563eb", color: "white", fontWeight: "bold", cursor: "pointer" }}>
-              Simpan Soal
-            </button>
           </div>
         </div>
       )}
+      {/* end modal upload soal excel */}
 
-      {/* end form tambah soal dibuat modal */}
+      {/* form tambah soal */}
+      {showAddForm && (
+        /* 1. Wrapper Luar: Tambahkan overflow-y-auto */
+        <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm overflow-y-auto overflow-x-hidden">
+          {/* 2. Flex Container: 
+          - Ganti items-center jadi items-start
+          - Tambahkan py-12 (padding atas bawah) agar modal punya jarak dari tepi browser
+    */}
+          <div className="flex min-h-screen items-start justify-center p-4 py-12">
+            {/* 3. Kartu Modal: Hapus 'my-8' karena sudah dihandle oleh 'py-12' di atas */}
+            <div className="bg-white w-full max-w-2xl p-8 rounded-[2.5rem] border-[3px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] relative transition-all animate-in fade-in zoom-in duration-200">
+              {/* Header Modal */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-2 h-8 bg-[#FFD600] rounded-full border-2 border-black"></div>
+                <h3 className="text-xl font-black uppercase tracking-tighter text-black">Tambah Soal Baru</h3>
+              </div>
+
+              <div className="space-y-6">
+                {/* Row 1: Tipe Soal & Meta */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Tipe Soal</label>
+                    <select
+                      className="w-full p-3 rounded-2xl border-2 border-black font-bold text-sm bg-white cursor-pointer"
+                      value={addForm.isMatrix ? "matrix" : "standar"}
+                      onChange={(e) => setAddForm({ ...addForm, isMatrix: e.target.value === "matrix", jawaban: "" })}
+                    >
+                      <option value="standar">Pilihan Ganda</option>
+                      <option value="matrix">Matrix (Tabel)</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Subjects</label>
+                    <select
+                      className="w-full p-3 rounded-2xl border-2 border-black font-bold text-sm bg-white uppercase cursor-pointer"
+                      value={addForm.mapel}
+                      onChange={(e) => setAddForm({ ...addForm, mapel: e.target.value })}
+                    >
+                      <option value="bi">Bahasa Indonesia</option>
+                      <option value="mtk">Matematika</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Stage</label>
+                    <select
+                      className="w-full p-3 rounded-2xl border-2 border-black font-bold text-sm bg-white cursor-pointer"
+                      value={addForm.stage}
+                      onChange={(e) => setAddForm({ ...addForm, stage: Number(e.target.value) })}
+                    >
+                      <option value={1}>Stage 1</option>
+                      <option value={2}>Stage 2</option>
+                      <option value={3}>Stage 3</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Row 2: Pertanyaan */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Isi Pertanyaan</label>
+                  <textarea
+                    placeholder="Tulis Pertanyaan di sini..."
+                    className="w-full min-h-[100px] p-4 rounded-3xl border-2 border-black font-medium text-gray-700 focus:ring-0 focus:border-black placeholder:text-gray-300"
+                    value={addForm.pertanyaan}
+                    onChange={(e) => setAddForm({ ...addForm, pertanyaan: e.target.value })}
+                  />
+                </div>
+
+                {/* --- INPUT DINAMIS --- */}
+                {addForm.isMatrix ? (
+                  <div className="bg-gray-50 p-6 rounded-[2rem] border-2 border-dashed border-gray-200">
+                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Konfigurasi Matrix</h4>
+                    <div className="space-y-4">
+                      <input
+                        placeholder="Kolom Kategori (Contoh: Benar;Salah)"
+                        className="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-black text-sm transition-all"
+                        value={addForm.columns}
+                        onChange={(e) => setAddForm({ ...addForm, columns: e.target.value })}
+                      />
+                      <textarea
+                        placeholder="Daftar Pernyataan (Pisahkan dengan ; )"
+                        className="w-full p-3 min-h-[80px] rounded-xl border-2 border-gray-100 focus:border-black text-sm transition-all"
+                        value={addForm.sub_pertanyaan}
+                        onChange={(e) => setAddForm({ ...addForm, sub_pertanyaan: e.target.value })}
+                      />
+
+                      {addForm.columns && addForm.sub_pertanyaan && (
+                        <div className="mt-4 bg-white p-4 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]">
+                          <p className="text-[9px] font-black uppercase text-gray-400 mb-3 tracking-widest">Tentukan Kunci Jawaban:</p>
+                          <div className="space-y-3">
+                            {addForm.sub_pertanyaan.split(";").map((p, pIdx) => (
+                              <div key={pIdx} className="flex flex-col gap-2">
+                                <span className="text-[10px] font-bold text-gray-600 italic">"{p || `Pernyataan ${pIdx + 1}`}"</span>
+                                <div className="flex flex-wrap gap-2">
+                                  {addForm.columns.split(";").map((col, cIdx) => (
+                                    <button
+                                      key={cIdx}
+                                      type="button"
+                                      onClick={() => {
+                                        let jawArr = addForm.jawaban.split(";");
+                                        while (jawArr.length < addForm.sub_pertanyaan.split(";").length) jawArr.push("");
+                                        jawArr[pIdx] = col;
+                                        setAddForm({ ...addForm, jawaban: jawArr.join(";") });
+                                      }}
+                                      className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all border-2 ${
+                                        addForm.jawaban.split(";")[pIdx] === col ? "bg-black text-white border-black" : "bg-white text-gray-400 border-gray-100 hover:border-gray-300 shadow-sm"
+                                      }`}
+                                    >
+                                      {col}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 p-6 rounded-[2rem] border-2 border-dashed border-gray-200">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400">Opsi Jawaban</h4>
+                      <label className="flex items-center gap-2 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-xs checkbox-primary border-2 border-black"
+                          checked={addForm.multiple}
+                          onChange={(e) => setAddForm({ ...addForm, multiple: e.target.checked, jawaban: "" })}
+                        />
+                        <span className="text-[10px] font-black uppercase text-gray-400 group-hover:text-black">Mode Kompleks</span>
+                      </label>
+                    </div>
+
+                    <div className="space-y-3">
+                      {addForm.opsi.map((op, idx) => (
+                        <div key={idx} className="flex items-center gap-3 bg-white p-2 rounded-2xl border-2 border-gray-100 focus-within:border-black transition-all">
+                          <input
+                            type={addForm.multiple ? "checkbox" : "radio"}
+                            name="kunci_add"
+                            className="w-5 h-5 cursor-pointer accent-black"
+                            checked={addForm.jawaban.split(";").includes(op) && op.trim() !== ""}
+                            onChange={() => toggleJawabanSelection(addForm, setAddForm, op)}
+                          />
+                          <input
+                            className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium"
+                            placeholder={`Opsi ${String.fromCharCode(65 + idx)}`}
+                            value={op}
+                            onChange={(e) => {
+                              const newOpsi = [...addForm.opsi];
+                              newOpsi[idx] = e.target.value;
+                              setAddForm({ ...addForm, opsi: newOpsi });
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="mt-8 pt-6 border-t-2 border-gray-100 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Kunci Tersimpan</span>
+                    <span className="text-xs font-bold text-black truncate max-w-[200px]">{addForm.jawaban || "-"}</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <button onClick={() => setShowAddForm(false)} className="px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-gray-400 hover:text-black transition-all">
+                      Batal
+                    </button>
+                    <button
+                      onClick={handleCreate}
+                      className="bg-[#FFD600] px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] border-[3px] border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#2196f3] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+                    >
+                      Simpan Soal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* end form tambah soal */}
 
       {/* form edit soal */}
       {editingSoal && (
-        <div
-          className="modal-edit"
-          style={{ border: "2px solid #10b981", padding: "20px", borderRadius: "12px", marginBottom: "30px", backgroundColor: "#fff", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <h3 style={{ color: "#065f46", margin: 0 }}>Edit Soal</h3>
-            <span style={{ fontSize: "12px", padding: "4px 10px", borderRadius: "20px", background: "#f0fdf4", color: "#10b981", fontWeight: "bold", border: "1px solid #10b981" }}>
-              ID: {editingSoal._id.slice(-6)}
-            </span>
-          </div>
-
-          {/* Dropdown Tipe Soal dengan Logic Reset & Restore */}
-          <div style={{ marginBottom: "15px", display: "flex", alignItems: "center", gap: "10px", padding: "12px", background: "#f0fdf4", borderRadius: "8px" }}>
-            <label style={{ fontWeight: "bold", color: "#065f46" }}>Tipe Soal: </label>
-            <select
-              style={{ padding: "6px", borderRadius: "6px", border: "1px solid #10b981", outline: "none" }}
-              value={form.isMatrix ? "matrix" : "standar"}
-              onChange={(e) => {
-                const isMatrixTarget = e.target.value === "matrix";
-
-                // 1. Ambil jawaban asli dari database untuk backup
-                const originalJawaban = editingSoal.jawaban;
-
-                // 2. Logic Konversi Jawaban agar tidak Error .split()
-                let restoredJawaban = "";
-                if (isMatrixTarget === editingSoal.isMatrix) {
-                  // Jika balik ke tipe asli soal ini
-                  restoredJawaban = editingSoal.isMatrix ? Object.values(originalJawaban).join(";") : Array.isArray(originalJawaban) ? originalJawaban.join(";") : originalJawaban;
-                } else {
-                  // Jika pindah ke tipe yang baru/berbeda dari database
-                  restoredJawaban = "";
-                }
-
-                setForm({
-                  ...form,
-                  isMatrix: isMatrixTarget,
-                  // Pastikan jawaban SELALU STRING di dalam form state
-                  jawaban: String(restoredJawaban),
-                  opsi: isMatrixTarget ? [] : isMatrixTarget === editingSoal.isMatrix ? editingSoal.opsi : ["", "", "", ""],
-                  columns: isMatrixTarget ? (isMatrixTarget === editingSoal.isMatrix ? editingSoal.columns.join(";") : "Benar;Salah") : "",
-                  sub_pertanyaan: isMatrixTarget ? (isMatrixTarget === editingSoal.isMatrix ? editingSoal.sub_pertanyaan.map((s) => s.teks).join(";") : "") : "",
-                  multiple: isMatrixTarget ? false : isMatrixTarget === editingSoal.isMatrix ? editingSoal.multiple : false,
-                });
-              }}
-            >
-              <option value="standar">Pilihan Ganda / Multiple Choice</option>
-              <option value="matrix">Matrix (Tabel)</option>
-            </select>
-          </div>
-
-          {/* Area Pertanyaan */}
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ fontSize: "12px", fontWeight: "bold", color: "#374151" }}>Isi Pertanyaan</label>
-            <textarea
-              style={{ width: "100%", minHeight: "100px", marginTop: "5px", padding: "12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "14px", lineHeight: "1.5" }}
-              value={form.pertanyaan}
-              onChange={(e) => setForm({ ...form, pertanyaan: e.target.value })}
-            />
-          </div>
-
-          {/* Pengaturan Mapel & Stage */}
-          <div style={{ display: "flex", gap: "15px", marginBottom: "20px" }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: "12px", fontWeight: "bold" }}>Mata Pelajaran</label>
-              <select
-                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #d1d5db", marginTop: "5px" }}
-                value={form.mapel}
-                onChange={(e) => setForm({ ...form, mapel: e.target.value })}
-              >
-                <option value="bi">Bahasa Indonesia</option>
-                <option value="mtk">Matematika</option>
-              </select>
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: "12px", fontWeight: "bold" }}>Stage Pelaksanaan</label>
-              <select
-                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #d1d5db", marginTop: "5px" }}
-                value={form.stage}
-                onChange={(e) => setForm({ ...form, stage: Number(e.target.value) })}
-              >
-                <option value={1}>Stage 1</option>
-                <option value={2}>Stage 2</option>
-                <option value={3}>Stage 3</option>
-              </select>
-            </div>
-          </div>
-
-          <hr style={{ border: "0", borderTop: "1px solid #e5e7eb", marginBottom: "20px" }} />
-
-          {/* --- INPUT KONDISIONAL --- */}
-          {form.isMatrix ? (
-            /* UI MATRIX */
-            <div style={{ background: "#f0f9ff", padding: "15px", borderRadius: "10px", border: "1px solid #bae6fd" }}>
-              <h4 style={{ margin: "0 0 12px 0", color: "#0369a1", display: "flex", alignItems: "center", gap: "5px" }}>⚙️ Pengaturan Matrix</h4>
-              <div style={{ marginBottom: "12px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "bold", color: "#0369a1" }}>Kolom Kategori (Pisahkan dengan ;)</label>
-                <input
-                  style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
-                  placeholder="Benar;Salah"
-                  value={form.columns}
-                  onChange={(e) => setForm({ ...form, columns: e.target.value })}
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: "11px", fontWeight: "bold", color: "#0369a1" }}>Daftar Pernyataan (Pisahkan dengan ;)</label>
-                <textarea
-                  style={{ width: "100%", padding: "10px", minHeight: "80px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
-                  placeholder="Pernyataan 1;Pernyataan 2"
-                  value={form.sub_pertanyaan}
-                  onChange={(e) => setForm({ ...form, sub_pertanyaan: e.target.value })}
-                />
-              </div>
-
-              {/* Visual Selector Matrix */}
-              {form.columns && form.sub_pertanyaan && (
-                <div style={{ marginTop: "15px", backgroundColor: "#fff", padding: "12px", borderRadius: "8px", border: "1px dashed #bae6fd" }}>
-                  <p style={{ fontSize: "12px", fontWeight: "bold", color: "#0369a1", marginBottom: "10px" }}>Tentukan Kunci Jawaban:</p>
-                  {form.sub_pertanyaan.split(";").map((p, pIdx) => (
-                    <div
-                      key={pIdx}
-                      style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px", gap: "10px", paddingBottom: "8px", borderBottom: "1px solid #f1f5f9" }}
-                    >
-                      <span style={{ fontSize: "13px", color: "#475569", flex: 1 }}>{p || `Baris ${pIdx + 1}`}</span>
-                      <div style={{ display: "flex", gap: "6px" }}>
-                        {form.columns.split(";").map((col, cIdx) => (
-                          <button
-                            key={cIdx}
-                            type="button"
-                            onClick={() => {
-                              let jawArr = form.jawaban.split(";");
-                              while (jawArr.length < form.sub_pertanyaan.split(";").length) jawArr.push("");
-                              jawArr[pIdx] = col;
-                              setForm({ ...form, jawaban: jawArr.join(";") });
-                            }}
-                            style={{
-                              padding: "5px 12px",
-                              fontSize: "11px",
-                              cursor: "pointer",
-                              borderRadius: "6px",
-                              border: "1px solid #e2e8f0",
-                              transition: "all 0.2s",
-                              backgroundColor: form.jawaban.split(";")[pIdx] === col ? "#0ea5e9" : "#f8fafc",
-                              color: form.jawaban.split(";")[pIdx] === col ? "white" : "#64748b",
-                              fontWeight: form.jawaban.split(";")[pIdx] === col ? "bold" : "normal",
-                            }}
-                          >
-                            {col}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+        <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm overflow-y-auto overflow-x-hidden">
+          <div className="flex min-h-screen items-start justify-center p-4 py-12">
+            <div className="bg-white w-full max-w-2xl p-8 rounded-[2.5rem] border-[3px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] relative transition-all animate-in fade-in zoom-in duration-200">
+              {/* Header Modal - Diseragamkan ke Kuning */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-[#FFD600] rounded-full border-2 border-black"></div>
+                  <h3 className="text-xl font-black uppercase tracking-tighter text-black">Edit Data Soal</h3>
                 </div>
-              )}
-            </div>
-          ) : (
-            /* UI STANDAR / MULTIPLE */
-            <div style={{ background: "#fdfaff", padding: "15px", borderRadius: "10px", border: "1px solid #e9d5ff" }}>
-              <h4 style={{ margin: "0 0 12px 0", color: "#6b21a8", display: "flex", alignItems: "center", gap: "5px" }}>📝 Opsi Jawaban</h4>
-              {form.opsi.map((op, idx) => (
-                <div key={idx} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                  <input
-                    type={form.multiple ? "checkbox" : "radio"}
-                    name="kunci_edit"
-                    style={{ width: "20px", height: "20px", cursor: "pointer" }}
-                    checked={form.jawaban.split(";").filter(Boolean).includes(op) && op.trim() !== ""}
-                    onChange={() => toggleJawabanSelection(form, setForm, op)}
-                  />
-                  <input
-                    style={{ flex: 1, padding: "10px", borderRadius: "6px", border: "1px solid #d1d5db" }}
-                    placeholder={`Opsi ${String.fromCharCode(65 + idx)}`}
-                    value={op}
+                <span className="text-[10px] font-black px-3 py-1 bg-gray-100 border-2 border-black rounded-full uppercase tracking-widest">ID: {editingSoal._id.slice(-6)}</span>
+              </div>
+
+              <div className="space-y-6">
+                {/* Tipe Soal - Background diganti dari Emerald ke Gray-50 agar netral */}
+                <div className="bg-gray-50 p-4 rounded-2xl border-2 border-black flex items-center gap-4">
+                  <label className="text-[10px] font-black uppercase text-black tracking-widest">Tipe Soal</label>
+                  <select
+                    className="flex-1 p-2 rounded-xl border-2 border-black font-bold text-sm bg-white cursor-pointer"
+                    value={form.isMatrix ? "matrix" : "standar"}
                     onChange={(e) => {
-                      const newOpsi = [...form.opsi];
-                      newOpsi[idx] = e.target.value;
-                      setForm({ ...form, opsi: newOpsi });
+                      const isMatrixTarget = e.target.value === "matrix";
+                      const originalJawaban = editingSoal.jawaban;
+                      let restoredJawaban = "";
+
+                      if (isMatrixTarget === editingSoal.isMatrix) {
+                        restoredJawaban = editingSoal.isMatrix ? Object.values(originalJawaban).join(";") : Array.isArray(originalJawaban) ? originalJawaban.join(";") : originalJawaban;
+                      } else {
+                        restoredJawaban = "";
+                      }
+
+                      setForm({
+                        ...form,
+                        isMatrix: isMatrixTarget,
+                        jawaban: String(restoredJawaban),
+                        opsi: isMatrixTarget ? [] : isMatrixTarget === editingSoal.isMatrix ? editingSoal.opsi : ["", "", "", ""],
+                        columns: isMatrixTarget ? (isMatrixTarget === editingSoal.isMatrix ? editingSoal.columns.join(";") : "Benar;Salah") : "",
+                        sub_pertanyaan: isMatrixTarget ? (isMatrixTarget === editingSoal.isMatrix ? editingSoal.sub_pertanyaan.map((s) => s.teks).join(";") : "") : "",
+                        multiple: isMatrixTarget ? false : isMatrixTarget === editingSoal.isMatrix ? editingSoal.multiple : false,
+                      });
                     }}
+                  >
+                    <option value="standar">Pilihan Ganda</option>
+                    <option value="matrix">Matrix (Tabel)</option>
+                  </select>
+                </div>
+
+                {/* Input Pertanyaan, Mapel, Stage (Sudah Seragam) */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Isi Pertanyaan</label>
+                  <textarea
+                    className="w-full min-h-[120px] p-4 rounded-3xl border-2 border-black font-medium text-gray-700 focus:ring-0 focus:border-black"
+                    value={form.pertanyaan}
+                    onChange={(e) => setForm({ ...form, pertanyaan: e.target.value })}
                   />
                 </div>
-              ))}
 
-              <div style={{ marginTop: "15px", padding: "10px", background: "#f5f3ff", borderRadius: "8px" }}>
-                <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
-                  <input type="checkbox" style={{ width: "18px", height: "18px" }} checked={form.multiple} onChange={(e) => setForm({ ...form, multiple: e.target.checked, jawaban: "" })} />
-                  <span style={{ fontWeight: "bold", fontSize: "14px", color: "#6b21a8" }}>Mode Multiple Jawaban (Jawaban Kompleks)</span>
-                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Mata Pelajaran</label>
+                    <select className="w-full p-3 rounded-2xl border-2 border-black font-bold text-sm bg-white" value={form.mapel} onChange={(e) => setForm({ ...form, mapel: e.target.value })}>
+                      <option value="bi">Bahasa Indonesia</option>
+                      <option value="mtk">Matematika</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Stage</label>
+                    <select
+                      className="w-full p-3 rounded-2xl border-2 border-black font-bold text-sm bg-white"
+                      value={form.stage}
+                      onChange={(e) => setForm({ ...form, stage: Number(e.target.value) })}
+                    >
+                      <option value={1}>Stage 1</option>
+                      <option value={2}>Stage 2</option>
+                      <option value={3}>Stage 3</option>
+                    </select>
+                  </div>
+                </div>
 
-                {/* Indikator Aturan Skor BE */}
-                {form.multiple && (
-                  <div style={{ marginTop: "10px", padding: "8px", borderLeft: "4px solid #ef4444", background: "#fef2f2" }}>
-                    <p style={{ fontSize: "11px", margin: 0, color: "#b91c1c" }}>
-                      ⚠️ <strong>Aturan Skor:</strong> Maks 3 jawaban benar & tidak boleh memilih semua opsi (Poin akan 0).
-                    </p>
+                {/* Konfigurasi Matrix - Warna Sky diganti ke Gray-50 agar seragam */}
+                {form.isMatrix ? (
+                  <div className="bg-gray-50 p-6 rounded-[2rem] border-2 border-dashed border-gray-200 space-y-4">
+                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">Konfigurasi Matrix</h4>
+
+                    {/* Input untuk Edit Kolom (Kategori) */}
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[9px] font-black uppercase text-gray-400 ml-2">Kolom Kategori (Pisahkan dengan ;)</label>
+                      <input
+                        placeholder="Contoh: Benar;Salah"
+                        className="w-full p-3 rounded-xl border-2 border-black focus:border-black text-sm bg-white"
+                        value={form.columns}
+                        onChange={(e) => setForm({ ...form, columns: e.target.value })}
+                      />
+                    </div>
+
+                    {/* Input untuk Edit Daftar Pernyataan */}
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[9px] font-black uppercase text-gray-400 ml-2">Daftar Pernyataan (Pisahkan dengan ;)</label>
+                      <textarea
+                        placeholder="Contoh: Pernyataan A;Pernyataan B"
+                        className="w-full p-3 min-h-[100px] rounded-xl border-2 border-black focus:border-black text-sm bg-white"
+                        value={form.sub_pertanyaan}
+                        onChange={(e) => setForm({ ...form, sub_pertanyaan: e.target.value })}
+                      />
+                    </div>
+
+                    {/* Visual Selector Kunci Jawaban Matrix */}
+                    {form.columns && form.sub_pertanyaan && (
+                      <div className="mt-4 bg-white p-4 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)]">
+                        <p className="text-[9px] font-black uppercase text-gray-400 mb-3 tracking-widest">Tentukan Kunci Jawaban:</p>
+                        <div className="space-y-4">
+                          {form.sub_pertanyaan.split(";").map((p, pIdx) => (
+                            <div key={pIdx} className="flex flex-col gap-2">
+                              <span className="text-[10px] font-bold text-gray-600 italic">"{p || `Pernyataan ${pIdx + 1}`}"</span>
+                              <div className="flex flex-wrap gap-2">
+                                {form.columns.split(";").map((col, cIdx) => (
+                                  <button
+                                    key={cIdx}
+                                    type="button"
+                                    onClick={() => {
+                                      let jawArr = form.jawaban.split(";");
+                                      // Pastikan panjang array sesuai dengan jumlah pernyataan
+                                      while (jawArr.length < form.sub_pertanyaan.split(";").length) jawArr.push("");
+                                      jawArr[pIdx] = col;
+                                      setForm({ ...form, jawaban: jawArr.join(";") });
+                                    }}
+                                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all border-2 ${
+                                      form.jawaban.split(";")[pIdx] === col
+                                        ? "bg-black text-white border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                                        : "bg-white text-gray-400 border-gray-100 hover:border-black"
+                                    }`}
+                                  >
+                                    {col}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Pilihan Ganda - Warna Ungu diganti ke Gray-50 */
+                  <div className="bg-gray-50 p-6 rounded-[2rem] border-2 border-dashed border-gray-200">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400">Opsi Jawaban</h4>
+                      <label className="flex items-center gap-2 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-xs border-2 border-black"
+                          checked={form.multiple}
+                          onChange={(e) => setForm({ ...form, multiple: e.target.checked, jawaban: "" })}
+                        />
+                        <span className="text-[10px] font-black uppercase text-gray-400 group-hover:text-black">Mode Kompleks</span>
+                      </label>
+                    </div>
+
+                    <div className="space-y-3">
+                      {form.opsi.map((op, idx) => (
+                        <div key={idx} className="flex items-center gap-3 bg-white p-2 rounded-2xl border-2 border-gray-100 focus-within:border-black transition-all">
+                          <input
+                            type={form.multiple ? "checkbox" : "radio"}
+                            className="w-5 h-5 accent-black cursor-pointer"
+                            checked={form.jawaban.split(";").includes(op) && op.trim() !== ""}
+                            onChange={() => toggleJawabanSelection(form, setForm, op)}
+                          />
+                          <input
+                            className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium"
+                            value={op}
+                            onChange={(e) => {
+                              const newOpsi = [...form.opsi];
+                              newOpsi[idx] = e.target.value;
+                              setForm({ ...form, opsi: newOpsi });
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
+
+                {/* Action Footer - Diganti ke Tema Hitam & Kuning */}
+                <div className="mt-8 pt-6 border-t-2 border-gray-100 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Kunci Tersimpan</span>
+                    <span className="text-xs font-bold text-black truncate max-w-[150px]">{form.jawaban || "-"}</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <button onClick={() => setEditingSoal(null)} className="px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-gray-400 hover:text-black transition-all">
+                      Batal
+                    </button>
+                    <button
+                      onClick={handleUpdate}
+                      className="bg-[#FFD600] px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] border-[3px] border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:bg-[#2196f3] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+                    >
+                      Simpan Perubahan
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
-
-          {/* Status Kunci Jawaban Saat Ini */}
-          <div style={{ marginTop: "20px", padding: "15px", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
-            <label style={{ fontSize: "12px", fontWeight: "bold", color: "#64748b" }}>Kunci Jawaban Aktif:</label>
-            <div style={{ color: "#10b981", fontWeight: "bold", fontSize: "16px", marginTop: "5px", wordBreak: "break-all" }}>
-              {form.jawaban || <span style={{ color: "#9ca3af", fontWeight: "normal" }}>Belum ada kunci dipilih</span>}
-            </div>
-          </div>
-
-          {/* Buttons Action */}
-          <div style={{ marginTop: "25px", display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-            <button
-              onClick={() => setEditingSoal(null)}
-              style={{ padding: "10px 25px", borderRadius: "8px", border: "1px solid #d1d5db", background: "#fff", color: "#4b5563", fontWeight: "bold", cursor: "pointer" }}
-            >
-              Batal
-            </button>
-            <button
-              onClick={handleUpdate}
-              style={{
-                padding: "10px 30px",
-                borderRadius: "8px",
-                border: "none",
-                background: "#10b981",
-                color: "#fff",
-                fontWeight: "bold",
-                cursor: "pointer",
-                boxShadow: "0 4px 6px -1px rgba(16, 185, 129, 0.4)",
-              }}
-            >
-              Simpan Perubahan
-            </button>
           </div>
         </div>
       )}
-      {/* form edit soal sampai sini */}
+      {/* end form edit soal */}
 
-      <h2>Manajemen Soal</h2>
+      {/* ---------------END MODAL ---------------*/}
 
-      {/* Filter */}
-      <div style={{ marginBottom: 20 }}>
-        <select value={mapel} onChange={(e) => setMapel(e.target.value)}>
-          <option value="">Semua Mapel</option>
-          <option value="bi">Bahasa Indonesia</option>
-          <option value="mtk">Matematika</option>
-        </select>
+      {/* PAGINATION */}
+      <div className="mt-10 flex items-center justify-between bg-white p-6 rounded-[2rem] border-[3px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+        <p className="text-[10px] font-black text-black uppercase tracking-[0.2em] ml-2">
+          Halaman <span className="text-[#2196f3] text-lg mx-1">{page}</span> dari {totalPage}
+        </p>
 
-        <select value={stage} onChange={(e) => setStage(e.target.value)}>
-          <option value="">Semua Stage</option>
-          <option value="1">Stage 1</option>
-          <option value="2">Stage 2</option>
-          <option value="3">Stage 3</option>
-        </select>
-        <button onClick={() => setShowAddForm(true)}>+ Tambah Soal</button>
-        <button onClick={() => setShowUploadModal(true)}>Upload Soal (Excel)</button>
+        <div className="flex gap-4">
+          {/* Tombol PREV - Putih Border Hitam */}
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+            className="px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest border-[3px] border-black bg-white text-black disabled:opacity-30 disabled:grayscale active:translate-x-[2px] active:translate-y-[2px] active:shadow-none shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+          >
+            ← Prev
+          </button>
+
+          {/* Tombol NEXT - Biru Saweria */}
+          <button
+            disabled={page === totalPage}
+            onClick={() => setPage(page + 1)}
+            className="bg-[#2196f3] text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest border-[3px] border-black active:translate-x-[2px] active:translate-y-[2px] active:shadow-none shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+          >
+            Next →
+          </button>
+        </div>
       </div>
-
-      <p>Total soal: {data.length}</p>
-
-      {/* Table */}
-      <table border="1" cellPadding="8" width="100%">
-        <thead>
-          <tr>
-            <th>Mapel</th>
-            <th>Stage</th>
-            <th>Pertanyaan</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((s) => (
-            <tr key={s._id}>
-              <td>{s.mapel}</td>
-              <td>{s.stage}</td>
-              <td>{s.pertanyaan}</td>
-              <td>
-                <button onClick={() => handleEdit(s)}>Edit</button> <button onClick={() => handleDelete(s._id)}>Hapus</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div style={{ marginTop: 12 }}>
-        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-          Prev
-        </button>
-
-        <span style={{ margin: "0 10px" }}>
-          {page} / {totalPage}
-        </span>
-
-        <button disabled={page === totalPage} onClick={() => setPage(page + 1)}>
-          Next
-        </button>
-      </div>
+      {/* END PAGINATION */}
     </div>
   );
 }

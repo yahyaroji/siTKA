@@ -66,7 +66,7 @@ export default function Login() {
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-lg">🆔</span>
                 <input
-                  type="text"
+                  type="number"
                   placeholder="Masukkan NISN kamu"
                   className="input input-bordered w-full pl-10 focus:outline-emerald-500 transition-all bg-base-200/30"
                   value={nis}
@@ -125,7 +125,7 @@ export default function Login() {
         <div className="mt-8 space-y-4 text-center">
           <p className="text-sm text-base-content/60">
             Kesulitan masuk?{" "}
-            <a href="https://wa.me/6285707701166?text=Halo%20Helpdesk,%0ANama/Username:%0AKendala:" target="_blank" className="text-emerald-600 font-bold hover:underline italic">
+            <a href="https://wa.me/6285707701166?text=Halo%20Helpdesk,%0ANama%20Lengkap:%0AKendala:" target="_blank" className="text-emerald-600 font-bold hover:underline italic">
               Hubungi Admin IT
             </a>
           </p>

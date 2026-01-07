@@ -44,61 +44,64 @@ export default function BankSoalPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* HEADER FILTER PREVIEW */}
-      <div className="card bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-lg">
-        <div className="card-body p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-bold italic flex items-center gap-2">🖥️ LIVE PREVIEW</h2>
-            <p className="text-xs opacity-70 font-medium">Tampilan yang akan dilihat siswa di layar ujian</p>
-          </div>
+    <div className="space-y-8 max-w-7xl mx-auto pb-20">
+      {/* HEADER FILTER PREVIEW - Neo-Brutal Style */}
+      <div className="bg-[#2196f3] p-6 rounded-[2.5rem] border-[3px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <h2 className="text-2xl font-black text-white italic tracking-tighter flex items-center gap-3">
+            <span className="bg-white p-2 rounded-xl text-[#2196f3] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">🖥️</span>
+            LIVE PREVIEW
+          </h2>
+          <p className="text-[10px] text-blue-100 font-black uppercase tracking-[0.2em] mt-1">Simulasi Tampilan Layar Ujian Siswa</p>
+        </div>
 
-          <div className="flex gap-2">
-            <select className="select select-sm select-bordered text-slate-900 font-bold" value={mapel} onChange={(e) => setMapel(e.target.value)}>
-              <option value="bi">Bahasa Indonesia</option>
-              <option value="mtk">Matematika</option>
-            </select>
+        <div className="flex gap-4">
+          <select
+            className="bg-white border-[3px] border-black rounded-2xl px-4 py-2 font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0"
+            value={mapel}
+            onChange={(e) => setMapel(e.target.value)}
+          >
+            <option value="bi">INDONESIAN</option>
+            <option value="mtk">MATHEMATICS</option>
+          </select>
 
-            <select className="select select-sm select-bordered text-slate-900 font-bold" value={stage} onChange={(e) => setStage(Number(e.target.value))}>
-              <option value={1}>Stage 1</option>
-              <option value={2}>Stage 2</option>
-              <option value={3}>Stage 3</option>
-            </select>
-          </div>
+          <select
+            className="bg-white border-[3px] border-black rounded-2xl px-4 py-2 font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0"
+            value={stage}
+            onChange={(e) => setStage(Number(e.target.value))}
+          >
+            <option value={1}>STAGE 1</option>
+            <option value={2}>STAGE 2</option>
+            <option value={3}>STAGE 3</option>
+          </select>
         </div>
       </div>
 
       {/* RENDER KONTEN PREVIEW */}
       {loading ? (
-        <div className="p-20 text-center bg-white rounded-3xl border shadow-inner">
-          <div className="loading loading-spinner loading-lg text-indigo-600"></div>
-          <p className="mt-4 font-bold text-slate-400">Menyiapkan tampilan soal...</p>
+        <div className="p-32 text-center bg-white rounded-[3rem] border-[3px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+          <div className="loading loading-spinner loading-lg text-[#2196f3]"></div>
+          <p className="mt-6 font-black text-black uppercase tracking-widest text-sm">Menyiapkan Lembar Soal...</p>
         </div>
       ) : soal.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 animate-in fade-in duration-300">
-          {/* AREA SOAL (Gaya Siswa) */}
-          <div className="lg:col-span-3 space-y-4">
-            <div className="card bg-white shadow-xl border-t-8 border-indigo-500 overflow-hidden">
-              <div className="card-body p-6 md:p-10">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {/* AREA SOAL (Sisi Kiri) */}
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-white rounded-[3rem] border-[3px] border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+              <div className="p-8 md:p-12">
                 {/* Header Info Nomor & Jenis Soal */}
-                <div className="flex justify-between items-center mb-8 pb-4 border-b">
-                  <div className="flex items-center gap-3">
-                    <span className="badge badge-lg bg-slate-800 text-white p-4 font-black">SOAL NO. {current + 1}</span>
+                <div className="flex flex-wrap justify-between items-center mb-10 pb-6 border-b-[3px] border-gray-100 gap-4">
+                  <div className="flex items-center gap-4">
+                    <span className="bg-black text-[#FFD600] px-6 py-2 rounded-2xl font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">SOAL NO. {current + 1}</span>
 
-                    {/* LABEL JENIS SOAL */}
                     {soal[current].isMatrix ? (
-                      <span className="badge badge-secondary font-bold px-4 py-3">KATEGORI / MATRIX</span>
-                    ) : soal[current].multiple ? (
-                      <span className="badge badge-warning font-bold px-4 py-3 text-white">PILIHAN GANDA KOMPLEKS (MULTIPLE)</span>
+                      <span className="bg-emerald-100 text-emerald-700 border-2 border-emerald-200 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">KATEGORI MATRIX</span>
                     ) : (
-                      <span className="badge badge-info font-bold px-4 py-3 text-white">PILIHAN GANDA (SINGLE)</span>
+                      <span className="bg-blue-100 text-[#2196f3] border-2 border-blue-200 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+                        {soal[current].multiple ? "MULTIPLE CHOICE" : "SINGLE CHOICE"}
+                      </span>
                     )}
                   </div>
-
-                  {/* <div className="text-right hidden md:block">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status Tampilan</div>
-                    <div className="font-black text-emerald-600 uppercase">Live Preview</div>
-                  </div> */}
                 </div>
 
                 {/* LOGIKA PERTANYAAN */}
@@ -110,22 +113,22 @@ export default function BankSoalPage() {
                   const soalText = hasWacana ? parts[1] : parts[0];
 
                   return (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       {hasWacana && (
-                        <div className="p-5 bg-slate-50 border-l-4 border-indigo-500 rounded-r-2xl italic text-slate-700 text-sm shadow-inner">
-                          <p className="font-bold mb-2 not-italic text-indigo-700">📌 Bacaan Soal:</p>
+                        <div className="p-6 bg-gray-50 border-[3px] border-black rounded-[2rem] text-gray-700 text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,0.05)] leading-relaxed">
+                          <p className="font-black mb-3 text-black uppercase tracking-widest text-[10px]">📌 Bacaan Soal:</p>
                           {wacanaText.split("|").map((p, i) => (
-                            <p key={i} className="mb-2 leading-relaxed">
+                            <p key={i} className="mb-2">
                               {renderMath(p)}
                             </p>
                           ))}
                         </div>
                       )}
 
-                      <div className="text-xl text-slate-800 leading-relaxed font-medium">
+                      <div className="text-xl md:text-2xl text-black leading-snug font-bold">
                         {soalText.split("|").map((bagian, idx) =>
                           bagian.trim().startsWith("http") ? (
-                            <img key={idx} src={bagian} className="max-w-full h-auto rounded-xl shadow-lg my-6 border-4 border-white mx-auto" alt="lampiran" />
+                            <img key={idx} src={bagian} className="max-w-full h-auto rounded-[2rem] border-[3px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)] my-8 mx-auto" alt="lampiran" />
                           ) : (
                             <div key={idx} className="mb-4">
                               {renderMath(bagian)}
@@ -135,29 +138,27 @@ export default function BankSoalPage() {
                       </div>
 
                       {/* AREA OPSI JAWABAN */}
-                      <div className="grid grid-cols-1 gap-3 mt-10">
+                      <div className="mt-12">
                         {q.isMatrix ? (
-                          <div className="overflow-x-auto border-2 rounded-2xl border-slate-100">
-                            <table className="table w-full bg-white">
-                              <thead className="bg-slate-50">
+                          <div className="overflow-hidden border-[3px] border-black rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,0.05)]">
+                            <table className="table w-full">
+                              <thead className="bg-gray-100 border-b-[3px] border-black">
                                 <tr>
-                                  <th className="w-12 text-center text-slate-400 italic">No</th>
-                                  <th className="text-slate-600">Pernyataan</th>
+                                  <th className="bg-gray-100 text-black font-black uppercase text-[10px] tracking-widest p-4">Pernyataan</th>
                                   {q.columns?.map((c, i) => (
-                                    <th key={i} className="text-center text-indigo-600 font-bold uppercase text-[10px]">
+                                    <th key={i} className="bg-gray-100 text-center text-black font-black uppercase text-[10px] p-4 border-l-2 border-black/10">
                                       {c}
                                     </th>
                                   ))}
                                 </tr>
                               </thead>
-                              <tbody>
+                              <tbody className="divide-y-2 divide-gray-100">
                                 {q.sub_pertanyaan?.map((sub, sIdx) => (
-                                  <tr key={sIdx} className="hover:bg-indigo-50/30 transition-colors">
-                                    <td className="font-bold text-center text-slate-300">{sub.id}</td>
-                                    <td className="text-slate-700 font-medium">{renderMath(sub.teks)}</td>
+                                  <tr key={sIdx} className="hover:bg-blue-50/50 transition-colors">
+                                    <td className="text-black font-bold p-5">{renderMath(sub.teks)}</td>
                                     {q.columns?.map((_, i) => (
-                                      <td key={i} className="text-center">
-                                        <input type="radio" className="radio radio-primary radio-sm opacity-30" disabled />
+                                      <td key={i} className="text-center border-l-2 border-gray-50">
+                                        <input type="radio" className="radio border-2 border-black radio-primary w-6 h-6" disabled />
                                       </td>
                                     ))}
                                   </tr>
@@ -166,14 +167,17 @@ export default function BankSoalPage() {
                             </table>
                           </div>
                         ) : (
-                          q.opsi?.map((o, idx) => (
-                            <div key={idx} className="flex items-center gap-4 p-4 border-2 border-slate-100 rounded-2xl bg-white hover:border-indigo-200 transition-all group">
-                              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                                {String.fromCharCode(65 + idx)}
+                          <div className="grid grid-cols-1 gap-4">
+                            {q.opsi?.map((o, idx) => (
+                              <div
+                                key={idx}
+                                className="flex items-center gap-5 p-5 border-[3px] border-black rounded-3xl bg-white hover:bg-blue-50 hover:translate-x-2 transition-all cursor-pointer group shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                              >
+                                <div className="w-10 h-10 rounded-xl bg-black text-[#FFD600] flex items-center justify-center font-black transition-colors">{String.fromCharCode(65 + idx)}</div>
+                                <span className="font-bold text-lg text-black">{renderMath(o)}</span>
                               </div>
-                              <span className="font-semibold text-slate-600">{renderMath(o)}</span>
-                            </div>
-                          ))
+                            ))}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -182,58 +186,70 @@ export default function BankSoalPage() {
               </div>
             </div>
 
-            {/* NAVIGASI TOMBOL */}
-            <div className="flex justify-between items-center p-2">
-              <button disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className="btn btn-outline border-slate-200 gap-2">
-                ← PREV
+            {/* NAVIGASI TOMBOL - Neo-Brutal Style */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-4">
+              <button
+                disabled={current === 0}
+                onClick={() => setCurrent((c) => c - 1)}
+                className="w-full md:w-auto px-10 py-4 bg-white border-[3px] border-black rounded-2xl font-black uppercase tracking-widest shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                ← SEBELUMNYA
               </button>
-              <div className="flex flex-col items-center">
-                <span className="text-[10px] font-black opacity-30 uppercase tracking-widest text-center">Simulasi Navigasi Siswa</span>
-                <progress className="progress progress-primary w-56" value={current + 1} max={soal.length}></progress>
+
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Progress Pengerjaan</span>
+                <div className="w-64 h-4 bg-gray-100 border-[3px] border-black rounded-full overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                  <div className="h-full bg-[#2196f3] transition-all duration-500" style={{ width: `${((current + 1) / soal.length) * 100}%` }}></div>
+                </div>
               </div>
-              <button disabled={current === soal.length - 1} onClick={() => setCurrent((c) => c + 1)} className="btn btn-primary px-8 shadow-lg shadow-indigo-200 gap-2">
-                NEXT →
+
+              <button
+                disabled={current === soal.length - 1}
+                onClick={() => setCurrent((c) => c + 1)}
+                className="w-full md:w-auto px-10 py-4 bg-[#2196f3] text-white border-[3px] border-black rounded-2xl font-black uppercase tracking-widest shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 disabled:opacity-30 transition-all"
+              >
+                SELANJUTNYA →
               </button>
             </div>
           </div>
 
-          {/* NAVIGASI NOMOR (SISI KANAN) */}
-          <div className="space-y-4">
-            <div className="card bg-white shadow-xl border border-slate-100">
-              <div className="card-body p-4">
-                <h3 className="font-black text-center text-[10px] uppercase tracking-widest mb-4 text-slate-400">Daftar Soal</h3>
-                <div className="grid grid-cols-5 gap-2 overflow-y-auto max-h-96 p-1">
-                  {soal.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrent(i)}
-                      className={`h-10 rounded-xl text-xs font-black transition-all border-2
-                        ${i === current ? "bg-indigo-600 border-indigo-600 text-white shadow-lg" : "bg-white border-slate-100 text-slate-400 hover:border-indigo-300"}`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                </div>
+          {/* NAVIGASI NOMOR (Sisi Kanan) */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-[2.5rem] border-[3px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
+              <h3 className="font-black text-center text-[10px] uppercase tracking-[0.2em] mb-6 text-gray-400">Peta Soal</h3>
+              <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
+                {soal.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrent(i)}
+                    className={`h-12 rounded-xl text-xs font-black transition-all border-[3px]
+                    ${i === current ? "bg-black text-[#FFD600] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]" : "bg-white border-gray-100 text-gray-400 hover:border-black hover:text-black"}`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* KETERANGAN KUNCI (KHUSUS GURU) */}
-            <div className="card bg-amber-50 border border-amber-200 shadow-sm">
-              <div className="card-body p-4 text-amber-900">
-                <h4 className="font-black text-xs mb-2">🔑 Kunci Jawaban:</h4>
-                <p className="text-sm font-bold bg-white p-2 rounded border border-amber-200">
+            {/* KETERANGAN KUNCI - Khusus Guru */}
+            <div className="bg-[#FFD600] rounded-[2.5rem] border-[3px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xl">🔑</span>
+                <h4 className="font-black text-[10px] uppercase tracking-widest text-black">Kunci Jawaban Guru</h4>
+              </div>
+              <div className="bg-white/50 border-2 border-black/10 rounded-2xl p-4">
+                <p className="text-sm font-black text-black break-words">
                   {Array.isArray(soal[current].jawaban) ? soal[current].jawaban.join(", ") : typeof soal[current].jawaban === "object" ? JSON.stringify(soal[current].jawaban) : soal[current].jawaban}
                 </p>
-                <p className="text-[10px] opacity-60 mt-2 italic">*Hanya Anda yang bisa melihat ini (Siswa tidak)</p>
               </div>
+              <p className="text-[9px] font-bold text-black/40 mt-3 italic text-center">Rahasia: Siswa tidak akan melihat panel ini.</p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="p-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-200 shadow-inner animate-pulse">
-          <div className="text-5xl mb-4">📭</div>
-          <p className="text-slate-400 font-black uppercase tracking-widest">Tidak ada soal ditemukan</p>
-          <p className="text-xs text-slate-300">Coba ubah filter Mapel atau Stage di atas</p>
+        <div className="p-32 text-center bg-white rounded-[3rem] border-[3px] border-black border-dashed">
+          <div className="text-6xl mb-6 grayscale">📭</div>
+          <p className="text-gray-400 font-black uppercase tracking-[0.3em]">Lembar Soal Kosong</p>
         </div>
       )}
     </div>

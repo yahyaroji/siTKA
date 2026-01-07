@@ -139,63 +139,52 @@ export const getSiswaWithResult = async (req, res) => {
 
 export const createSiswa = async (req, res) => {
   try {
-    // 1. Cek Role
     if (req.user.role !== "guru") {
       return res.status(403).json({ message: "Akses ditolak" });
     }
 
-    const { nama_lengkap, nis, password, sekolah_asal, email } = req.body;
+    // TAMBAHKAN 'role' di sini agar bisa diambil dari frontend
+    const { nama_lengkap, nis, password, sekolah_asal, email, role } = req.body;
 
-    // 2. Validasi Lengkap
-    if (!nama_lengkap || !nis || !password || !sekolah_asal || !email) {
+    if (!nama_lengkap || !nis || !password || !email) {
       return res.status(400).json({ message: "Data belum lengkap" });
     }
 
-    // 3. Cek NIS unik
     const existing = await User.findOne({ nis });
     if (existing) {
-      return res.status(400).json({ message: "NIS sudah terdaftar" });
+      return res.status(400).json({ message: "NIS/ID sudah terdaftar" });
     }
 
-    // 4. Hash Password (tetap pakai hash untuk keamanan DB)
     const hashed = await bcrypt.hash(String(password), 10);
 
-    // 5. Simpan ke Database
-    const siswa = await User.create({
+    const userBaru = await User.create({
       nama_lengkap,
       nis,
       password: hashed,
-      sekolah_asal,
+      sekolah_asal: sekolah_asal || "Internal",
       email,
-      role: "siswa",
-      verifiedStage: 0,
-      isVerifiedByAdmin: false,
+      // GANTI bagian ini supaya dinamis:
+      role: role || "siswa",
+      // Kalau dia guru, otomatis kasih akses penuh (stage 3 dan verified)
+      verifiedStage: role === "guru" ? 3 : 0,
+      isVerifiedByAdmin: role === "guru" ? true : false,
     });
 
-    // --- BAGIAN BARU: KIRIM EMAIL ---
     try {
-      console.log(`Mencoba mengirim email ke ${email}...`);
-      // Kita kirim 'password' dari req.body (yang belum di-hash)
+      // Logic email tetap sama
       await sendAccountEmail(email, nis, password);
-      console.log("Email berhasil terkirim ke siswa!");
     } catch (mailErr) {
-      // Kita log error emailnya, tapi tidak membatalkan proses pendaftaran
       console.error("Proses kirim email gagal:", mailErr.message);
     }
-    // --------------------------------
 
     res.status(201).json({
       success: true,
-      message: "Siswa berhasil ditambahkan dan email sedang dikirim",
-      data: {
-        id: siswa._id,
-        nama_lengkap: siswa.nama_lengkap,
-        nis: siswa.nis,
-      },
+      message: `${userBaru.role} berhasil ditambahkan`,
+      data: userBaru,
     });
   } catch (err) {
     console.error("Error di createSiswa:", err);
-    res.status(500).json({ message: "Gagal menambahkan siswa" });
+    res.status(500).json({ message: "Gagal menambahkan user" });
   }
 };
 
