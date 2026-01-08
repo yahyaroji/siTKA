@@ -296,7 +296,7 @@ export const uploadSiswaExcel = async (req, res) => {
     let failed = 0;
     let failedList = [];
 
-    console.log(`--- Memulai Import ${rows.length} Siswa ---`);
+    // console.log(`--- Memulai Import ${rows.length} Siswa ---`);
 
     for (const row of rows) {
       try {
@@ -332,7 +332,7 @@ export const uploadSiswaExcel = async (req, res) => {
         // Kita gunakan await di sini agar server mengirim satu-satu
         // dan tidak membombardir server SMTP Google sekaligus
         await sendAccountEmail(row.email, row.nis, row.password);
-        console.log(`[${success + 1}] Email terkirim ke: ${row.email}`);
+        // console.log(`[${success + 1}] Email terkirim ke: ${row.email}`);
 
         success++;
 
@@ -346,7 +346,7 @@ export const uploadSiswaExcel = async (req, res) => {
       }
     }
 
-    console.log(`--- Import Selesai: ${success} Berhasil, ${failed} Gagal ---`);
+    // console.log(`--- Import Selesai: ${success} Berhasil, ${failed} Gagal ---`);
 
     res.json({
       message: "Proses upload selesai",

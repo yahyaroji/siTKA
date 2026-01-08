@@ -155,7 +155,7 @@ export const uploadSoalExcel = async (req, res) => {
 
     // convert sheet → array of object
     const rows = XLSX.utils.sheet_to_json(sheet);
-    console.log("rows:", rows);
+    // console.log("rows:", rows);
     if (rows.length === 0) {
       return res.status(400).json({
         message: "File Excel kosong",
@@ -174,7 +174,7 @@ export const uploadSoalExcel = async (req, res) => {
         const soal = parseRow(row, index + 2);
         questions.push(soal);
       } catch (err) {
-        console.log("Error pada baris:", index + 2, "->", err.message);
+        // console.log("Error pada baris:", index + 2, "->", err.message);
         errors.push(err.message);
       }
     });

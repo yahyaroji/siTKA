@@ -70,7 +70,7 @@ export const startExam = async (req, res) => {
       expiresAt,
       status: "ongoing",
     });
-    console.log("SESSION BE:", session);
+    // console.log("SESSION BE:", session);
 
     res.json({
       message: "Ujian dimulai",

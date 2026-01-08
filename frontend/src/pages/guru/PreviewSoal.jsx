@@ -238,9 +238,85 @@ export default function BankSoalPage() {
                 <h4 className="font-black text-[10px] uppercase tracking-widest text-black">Kunci Jawaban Guru</h4>
               </div>
               <div className="bg-white/50 border-2 border-black/10 rounded-2xl p-4">
-                <p className="text-sm font-black text-black break-words">
+                {/* <p className="text-sm font-black text-black break-words">
                   {Array.isArray(soal[current].jawaban) ? soal[current].jawaban.join(", ") : typeof soal[current].jawaban === "object" ? JSON.stringify(soal[current].jawaban) : soal[current].jawaban}
-                </p>
+                </p> */}
+                <div className="text-sm font-black text-black break-words flex flex-col items-center justify-center gap-2">
+                  {(() => {
+                    const jwb = soal[current]?.jawaban;
+                    const listOpsi = soal[current]?.opsi || [];
+
+                    const renderLatex = (val) => {
+                      if (typeof val === "string" && val.startsWith("$") && val.endsWith("$")) {
+                        const mathContent = val.slice(1, -1);
+                        return <InlineMath math={mathContent} />;
+                      }
+                      return val;
+                    };
+
+                    // FUNGSI PENCARI HURUF YANG LEBIH CERDAS
+                    const cariHurufDariOpsi = (teksJawaban) => {
+                      if (!teksJawaban) return "?";
+
+                      const index = listOpsi.findIndex((item) => {
+                        // Normalisasi teks: hapus spasi dan jadikan huruf kecil semua
+                        const cleanOpsi = String(item).trim().toLowerCase();
+                        const cleanJwb = String(teksJawaban).trim().toLowerCase();
+                        return cleanOpsi === cleanJwb;
+                      });
+
+                      if (index !== -1) {
+                        return String.fromCharCode(65 + index); // 0->A, 1->B, dst
+                      }
+                      return "?";
+                    };
+
+                    if (!jwb) return <span className="opacity-30 italic">Belum diisi</span>;
+
+                    // 1. JIKA FORMAT MATRIX (OBJECT)
+                    if (typeof jwb === "object" && !Array.isArray(jwb)) {
+                      try {
+                        const rows = Object.values(jwb);
+                        const matrixContent = rows.map((row) => (Array.isArray(row) ? row.join(" & ") : row)).join(" \\\\ ");
+                        return (
+                          <div className="bg-white/30 px-4 py-2 rounded-xl border border-black/5">
+                            <InlineMath math={`\\begin{pmatrix} ${matrixContent} \\end{pmatrix}`} />
+                          </div>
+                        );
+                      } catch {
+                        return <span className="text-[10px] opacity-50">{JSON.stringify(jwb)}</span>;
+                      }
+                    }
+
+                    // 2. JIKA JAWABAN MULTIPLE (ARRAY)
+                    if (Array.isArray(jwb)) {
+                      return (
+                        <div className="flex flex-col gap-2 w-full items-start px-4">
+                          {jwb.map((item, idx) => (
+                            <div key={idx} className="flex items-start gap-3 w-full border-b border-black/5 pb-2 last:border-0 last:pb-0">
+                              <span className="bg-black text-white w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-md text-[11px] font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
+                                {cariHurufDariOpsi(item)}
+                              </span>
+                              <div className="flex-1 text-left self-center font-bold">{renderLatex(item)}</div>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }
+
+                    // 3. JIKA JAWABAN TUNGGAL
+                    return (
+                      <div className="flex flex-col gap-2 w-full items-start px-4">
+                        <div className="flex items-start gap-3 w-full">
+                          <span className="bg-black text-white w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-md text-[11px] font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
+                            {cariHurufDariOpsi(jwb)}
+                          </span>
+                          <div className="flex-1 text-left self-center font-bold">{renderLatex(jwb)}</div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
               </div>
               <p className="text-[9px] font-bold text-black/40 mt-3 italic text-center">Rahasia: Siswa tidak akan melihat panel ini.</p>
             </div>

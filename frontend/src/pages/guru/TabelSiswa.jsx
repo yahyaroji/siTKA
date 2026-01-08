@@ -44,7 +44,7 @@ export default function TabelSiswa() {
       const res = await getSiswaWithResult();
 
       // LOG DEBUG: Cek di console (F12) apakah data guru ada di sini
-      console.log("Data dari server:", res.data);
+      // console.log("Data dari server:", res.data);
 
       setData(res.data || []);
     } catch {
@@ -101,7 +101,7 @@ export default function TabelSiswa() {
         nis: filterRole === "guru" ? form.nip || form.nis : form.nis,
       };
 
-      console.log("Data siap kirim:", dataToSubmit); // Intip dulu di console sebelum kirim
+      // console.log("Data siap kirim:", dataToSubmit); // Intip dulu di console sebelum kirim
 
       if (editingSiswa) {
         await updateSiswa(editingSiswa._id, dataToSubmit); // Pakai dataToSubmit!
