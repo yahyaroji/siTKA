@@ -13,6 +13,8 @@ export const verifySiswa = (id, payload) => {
 };
 
 // ================== MANAJEMEN USER ==================
+//register siswa
+export const registerSiswaMandiri = (data) => API.post("/guru/register", data);
 // CRUD siswa
 export const createSiswa = (data) => API.post("/guru/siswa", data);
 export const updateSiswa = (id, data) => API.put(`/guru/siswa/${id}`, data);

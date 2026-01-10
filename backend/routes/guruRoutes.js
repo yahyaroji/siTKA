@@ -1,13 +1,14 @@
 import express from "express";
-import { getAllSiswa, getSiswaWithResult, verifySiswa, createSiswa, updateSiswa, deleteSiswa, uploadSiswaExcel } from "../controllers/guruController.js";
+import { registerSiswaMandiri, getAllSiswa, getSiswaWithResult, verifySiswa, createSiswa, updateSiswa, deleteSiswa, uploadSiswaExcel } from "../controllers/guruController.js";
 import { getSoalList, uploadSoalExcel, deleteSoal, updateSoal, createSoal } from "../controllers/guruSoalController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadExcel from "../middleware/uploadExcel.js";
 
 const router = express.Router();
+//register siswa mandiri
+router.post("/register", registerSiswaMandiri);
 
 //hanya guru
-
 //mengurusi tabel hasil siswa
 router.get("/siswa", authMiddleware, getAllSiswa);
 router.patch("/siswa/:id/verify", authMiddleware, verifySiswa);

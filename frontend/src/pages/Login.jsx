@@ -1,7 +1,8 @@
 import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { apiLogin } from "../api/authApi";
-import Swal from "sweetalert2"; // Gunakan Swal untuk alert yang lebih manis
+import Swal from "sweetalert2";
+import Register from "./Register";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -49,26 +50,29 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        {/* Header Tetap Sama */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-black text-emerald-900 tracking-tight">Try Out TKA</h1>
-          <p className="text-base-content/60 font-medium">Masuk untuk memulai ujian kamu</p>
+      <div className="max-w-md w-full animate-fadeIn">
+        {/* HEADER SECTION */}
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-black text-emerald-900 tracking-tighter">
+            si<span className="text-emerald-600">TKA</span>
+          </h1>
+          <p className="text-base-content/50 font-medium mt-1">Sistem Informasi Try Out TKA </p>
         </div>
 
-        <div className="card bg-base-100 shadow-2xl border border-base-300">
-          <form onSubmit={handleLogin} className="card-body gap-4">
+        {/* LOGIN CARD */}
+        <div className="card bg-base-100 shadow-2xl border border-base-300 overflow-visible">
+          <form onSubmit={handleLogin} className="card-body gap-3 p-8">
             {/* Input NISN */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text font-bold text-emerald-800">Nomor Induk Siswa Nasional (NISN)</span>
+              <label className="label py-1">
+                <span className="label-text font-bold text-emerald-800 text-xs uppercase tracking-wider">NISN</span>
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-lg">🆔</span>
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 opacity-50">🆔</span>
                 <input
                   type="number"
-                  placeholder="Masukkan NISN kamu"
-                  className="input input-bordered w-full pl-10 focus:outline-emerald-500 transition-all bg-base-200/30"
+                  placeholder="Masukkan NISN"
+                  className="input input-bordered w-full pl-10 focus:input-primary transition-all bg-base-200/20 border-base-300"
                   value={nis}
                   onChange={(e) => setNis(e.target.value)}
                   required
@@ -76,27 +80,22 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Input Password dengan fitur Mata */}
+            {/* Input Password */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text font-bold text-emerald-800">Password</span>
+              <label className="label py-1">
+                <span className="label-text font-bold text-emerald-800 text-xs uppercase tracking-wider">Password</span>
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-lg">🔑</span>
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 opacity-50">🔑</span>
                 <input
-                  type={showPassword ? "text" : "password"} // Dinamis tergantung state
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="input input-bordered w-full pl-10 pr-10 focus:outline-emerald-500 transition-all bg-base-200/30"
+                  className="input input-bordered w-full pl-10 pr-10 focus:input-primary transition-all bg-base-200/20 border-base-300"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                {/* Tombol Mata */}
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 opacity-50 hover:opacity-100 transition-opacity"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
+                <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center opacity-40 hover:opacity-100 transition-opacity" onClick={() => setShowPassword(!showPassword)}>
                   {showPassword ? "👁️‍🗨️" : "👁️"}
                 </button>
               </div>
@@ -107,36 +106,74 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`btn bg-emerald-600 hover:bg-emerald-700 text-white shadow-md border-none transition-all
-                  ${loading ? "opacity-70" : "active:scale-95"}`}
+                className={`btn btn-primary text-white shadow-lg border-none transition-all hover:scale-[1.02] active:scale-95
+                ${loading ? "opacity-70" : ""}`}
               >
                 {loading ? <span className="loading loading-spinner"></span> : "Masuk Sekarang"}
               </button>
             </div>
 
-            {/* Pesan Lupa Password Kecil */}
-            <div className="text-center mt-2">
-              <span className="text-[10px] opacity-40 uppercase font-bold tracking-tighter">Pastikan NISN & Password sesuai dengan email yang diterima</span>
+            {/* Tips */}
+            <div className="mt-4 p-3 bg-emerald-50 rounded-xl border border-emerald-100/50">
+              <p className="text-[11px] text-center text-emerald-800 font-medium leading-relaxed">
+                Gunakan NISN & Password yang telah terdaftar di sistem.
+                {/* <span className="block opacity-70 text-[10px] mt-1 font-normal italic">(Detail akun dikirim otomatis ke Email setelah pendaftaran)</span> */}
+              </p>
+            </div>
+            {/* DIVIDER & DAFTAR MANDIRI */}
+            <div className="divider text-[10px] opacity-40 uppercase font-bold mt-4">Atau</div>
+
+            <div className="text-center">
+              <p className="text-sm text-base-content/60">
+                Belum punya akun?{" "}
+                <label htmlFor="modal-register" className="cursor-pointer text-emerald-600 font-bold hover:underline underline-offset-4 decoration-2">
+                  Daftar Sekarang
+                </label>
+              </p>
             </div>
           </form>
         </div>
+        {/* END LOGIN CARD */}
 
-        {/* Footer Section (Sudah sesuai kode kamu) */}
-        <div className="mt-8 space-y-4 text-center">
-          <p className="text-sm text-base-content/60">
-            Kesulitan masuk?{" "}
-            <a href="https://wa.me/6285707701166?text=Halo%20Helpdesk,%0ANama%20Lengkap:%0AKendala:" target="_blank" className="text-emerald-600 font-bold hover:underline italic">
-              Hubungi Admin IT
-            </a>
-          </p>
-          <div className="divider opacity-10 px-10"></div>
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-xs text-base-content/30 font-bold tracking-widest uppercase">Portal Try Out TKA &bull; TA 2025/2026</p>
-            <p className="text-sm text-base-content/40 font-medium flex items-center gap-1">
-              Build with <span className="animate-pulse text-blue-500">💙</span> by SMA Diponegoro TA
+        {/* FOOTER SECTION */}
+        <div className="mt-8 text-center space-y-4">
+          <a
+            href="https://wa.me/6285707701166?text=Halo%20Helpdesk,%0ANama%20Lengkap:%0AKendala:"
+            target="_blank"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 border border-base-300 text-xs font-bold text-emerald-700 hover:bg-emerald-50 transition-all"
+          >
+            <span></span> Kesulitan login? Chat di sini
+          </a>
+
+          <div className="flex flex-col items-center gap-1 pt-4">
+            <p className="text-[11px] font-medium opacity-60 flex items-center gap-1.5 justify-center">
+              build with
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 text-[10px]">💙</span>
+              </span>
+              by SMA DIPONEGORO TA
             </p>
           </div>
         </div>
+        {/* END FOOTER SECTION */}
+
+        {/* MODAL REGISTER */}
+        <input type="checkbox" id="modal-register" className="modal-toggle" />
+        <div className="modal modal-bottom sm:modal-middle" role="dialog">
+          <div className="modal-box w-11/12 max-w-2xl border border-emerald-500/20 shadow-2xl">
+            <label htmlFor="modal-register" className="btn btn-sm btn-circle absolute right-4 top-4 bg-base-200 border-none">
+              ✕
+            </label>
+            <div className="py-2">
+              <Register isModal={true} />
+            </div>
+          </div>
+          <label className="modal-backdrop" htmlFor="modal-register">
+            Close
+          </label>
+        </div>
+        {/* END MODAL REGISTER */}
       </div>
     </div>
   );

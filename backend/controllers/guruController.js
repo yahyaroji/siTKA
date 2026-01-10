@@ -364,3 +364,58 @@ export const uploadSiswaExcel = async (req, res) => {
 };
 
 //======END MANAJEMEN DATA USER======
+
+//======REGISTER SISWA========
+export const registerSiswaMandiri = async (req, res) => {
+  try {
+    // ambil data dari body
+    // console.log("Data masuk dari FE:", req.body);
+    const { nama_lengkap, nis, password, sekolah_asal, email } = req.body;
+
+    // validasi input
+    if (!nama_lengkap || !nis || !password || !email || !sekolah_asal) {
+      return res.status(400).json({ message: "Data pendaftaran belum lengkap" });
+    }
+
+    // validasi nis
+    const existing = await User.findOne({ nis });
+    if (existing) {
+      return res.status(400).json({ message: "NIS sudah terdaftar, silakan login" });
+    }
+
+    // hash
+    const hashed = await bcrypt.hash(String(password), 10);
+
+    // simpan db
+    const userBaru = await User.create({
+      nama_lengkap,
+      nis,
+      password: hashed,
+      sekolah_asal,
+      email,
+      role: "siswa",
+      verifiedStage: 0,
+      isVerifiedByAdmin: false,
+    });
+
+    // send mail
+    try {
+      await sendAccountEmail(email, nama_lengkap, nis, password);
+    } catch (mailErr) {
+      console.error("Gagal kirim email konfirmasi:", mailErr.message);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Pendaftaran berhasil, silakan login atau tunggu verifikasi",
+      data: {
+        nama: userBaru.nama_lengkap,
+        nis: userBaru.nis,
+      },
+    });
+  } catch (err) {
+    console.error("Error di registerSiswaMandiri:", err);
+    res.status(500).json({ message: "Terjadi kesalahan pada server" });
+  }
+};
+//======END REGISTER SISWA========

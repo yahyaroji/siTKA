@@ -7,7 +7,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import DashboardSiswa from "./pages/siswa/DashboardSiswa";
 import UjianPage from "./pages/siswa/UjianPage";
-// import HasilPage from "./pages/siswa/HasilPage";
 
 import DashboardGuru from "./pages/guru/DashboardGuru";
 import NotFound from "./pages/NotFound";
