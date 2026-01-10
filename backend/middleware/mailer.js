@@ -12,26 +12,6 @@ const sendAccountEmail = async (userEmail, nama_lengkap, nis, password) => {
     },
   });
 
-  // const mailOptions = {
-  //   from: `"Admin Portal Tryout TKA" <${process.env.EMAIL_USER}>`,
-  //   to: userEmail,
-  //   subject: "Akun Login Tryout TKA",
-  //   html: `
-  //     <div style="font-family: sans-serif; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px;">
-  //       <h2 style="color: #059669;">Halo, Peserta Tryout! 👋</h2>
-  //       <p>Akun kamu telah berhasil dibuat. Berikut adalah detail login untuk masuk ke dashboard:</p>
-  //       <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-  //         <p><strong>Username (NISN):</strong> ${nis}</p>
-  //         <p><strong>Password:</strong> ${password}</p>
-  //       </div>
-  //       <p>Silakan login melalui website resmi kami di https://smadipotryout.my.id</p>
-  //       <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-  //       <small style="color: #6b7280;">Jika kamu merasa tidak mendaftar, abaikan email ini.</small>
-  //     </div>
-  //   `,
-  // };
-  // return transporter.sendMail(mailOptions);
-
   const mailOptions = {
     from: `"Portal Try Out TKA" <${process.env.EMAIL_USER}>`,
     to: userEmail,
