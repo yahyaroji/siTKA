@@ -96,10 +96,10 @@ export default function DashboardGuru() {
           </div>
 
           {/* FOOTER */}
-          <footer className="py-16 text-center">
+          {/* <footer className="py-16 text-center">
             <div className="h-[1px] w-20 bg-black/10 mx-auto mb-6"></div>
             <p className="text-[10px] font-black tracking-[0.3em] opacity-30 uppercase">Academic Dashboard © 2024 • Built for Teachers</p>
-          </footer>
+          </footer> */}
         </div>
       </div>
     </>

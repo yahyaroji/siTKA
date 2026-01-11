@@ -98,6 +98,7 @@ export const getSoalBySession = async (req, res) => {
     const soal = await Exam.find({
       _id: { $in: session.soalOrder },
     }).select("-jawaban");
+
     // urutkan sesuai soalOrder
     const soalMap = {};
     soal.forEach((q) => {
