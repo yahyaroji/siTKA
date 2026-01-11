@@ -19,7 +19,7 @@ app.use(express.json());
 //untuk login
 app.use("/api/auth", authRoutes);
 //route yang harus login
-app.use("/api/exam", examRoutes);
+app.use("/api/exam", authMiddleware, examRoutes);
 app.use("/api/exam-result", authMiddleware, examResultRoutes);
 app.use("/api/guru", guruRoutes);
 
