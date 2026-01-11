@@ -24,15 +24,15 @@ router.post("/siswa/upload", authMiddleware, uploadExcel.single("file"), uploadS
 
 //tabel soal
 //upload soal dari excel
-router.post("/soal/upload", uploadExcel.single("file"), uploadSoalExcel);
+router.post("/soal/upload", authMiddleware, uploadExcel.single("file"), uploadSoalExcel);
 //get soal semua
-router.get("/soal", getSoalList);
+router.get("/soal", authMiddleware, getSoalList);
 //delete soal
-router.delete("/soal/:id", deleteSoal);
+router.delete("/soal/:id", authMiddleware, deleteSoal);
 //editsoal
-router.put("/soal/:id", updateSoal);
+router.put("/soal/:id", authMiddleware, updateSoal);
 //tambah soal
-router.post("/soal", createSoal);
+router.post("/soal", authMiddleware, createSoal);
 
 router.get("/test", (req, res) => {
   res.json({ ok: true });

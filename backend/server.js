@@ -21,7 +21,7 @@ app.use("/api/auth", authRoutes);
 //route yang harus login
 app.use("/api/exam", authMiddleware, examRoutes);
 app.use("/api/exam-result", authMiddleware, examResultRoutes);
-app.use("/api/guru", authMiddleware, guruRoutes);
+app.use("/api/guru", guruRoutes);
 
 //====end baruuu====
 
