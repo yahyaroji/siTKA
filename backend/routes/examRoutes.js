@@ -9,7 +9,7 @@ const router = express.Router();
 
 // ✅ GET SOAL → TANPA TOKEN
 router.post("/start", startExam);
-router.get("/session/:sessionId/soal", authMiddleware, getSoalBySession);
+router.get("/session/:sessionId/soal", getSoalBySession);
 // router.post("/session/:sessionId/submit", authMiddleware, submitBySession);
 
 // ✅ SUBMIT → PAKAI TOKEN
@@ -19,5 +19,5 @@ router.post("/submit", submitExam);
 // ✅ RESULT → PAKAI TOKEN
 // router.get("/my-result", authMiddleware, getMyResult);
 
-router.get("/exam/active-session", authMiddleware, getActiveSession);
+router.get("/exam/active-session", getActiveSession);
 export default router;
