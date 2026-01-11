@@ -97,10 +97,7 @@ export const getSoalBySession = async (req, res) => {
     // ambil soal sesuai urutan session
     const soal = await Exam.find({
       _id: { $in: session.soalOrder },
-    })
-      .select("-jawaban")
-      .lean();
-
+    }).select("-jawaban");
     // urutkan sesuai soalOrder
     const soalMap = {};
     soal.forEach((q) => {
