@@ -400,7 +400,7 @@ export const registerSiswaMandiri = async (req, res) => {
 
     // send mail
     try {
-      await sendAccountEmail(email, nama_lengkap, nis, password);
+      // await sendAccountEmail(email, nama_lengkap, nis, password);
     } catch (mailErr) {
       console.error("Gagal kirim email konfirmasi:", mailErr.message);
     }

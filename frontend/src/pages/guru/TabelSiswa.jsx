@@ -151,7 +151,14 @@ export default function TabelSiswa() {
   // --- LOGIKA FILTER & SORT ---
   const sekolahList = useMemo(() => {
     if (!Array.isArray(data)) return [];
-    return [...new Set(data.filter((s) => s.role === "siswa").map((s) => s.sekolah_asal))];
+
+    return [
+      ...new Set(
+        data
+          .filter((s) => s.role === "siswa" && s.sekolah_asal) // Pastikan hanya siswa dan sekolah_asal tidak kosong
+          .map((s) => s.sekolah_asal.trim().toUpperCase()) // kapital dan hilangkan spasi
+      ),
+    ].sort(); // Urutkan A-Z
   }, [data]);
 
   const filteredData = useMemo(() => {
@@ -167,7 +174,9 @@ export default function TabelSiswa() {
 
       // 2. Filter tambahan khusus jika role-nya siswa
       if (filterRole === "siswa") {
-        if (filterSekolah && item.sekolah_asal !== filterSekolah) return false;
+        if (filterSekolah && item.sekolah_asal?.trim().toUpperCase() !== filterSekolah) {
+          return false;
+        }
         if (filterVerified === "verified" && !(item.verifiedStage >= activeStage)) return false;
         if (filterVerified === "unverified" && item.verifiedStage >= activeStage) return false;
       }

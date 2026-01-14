@@ -25,7 +25,7 @@ export default function Login() {
         Swal.fire({
           icon: "success",
           title: "Login Berhasil!",
-          text: `Selamat datang kembali, ${data.user.nama_lengkap}!`,
+          text: `Selamat datang 😊 ${data.user.nama_lengkap}!`,
           showConfirmButton: false,
           timer: 1500,
         });
@@ -41,8 +41,16 @@ export default function Login() {
           confirmButtonColor: "#10b981",
         });
       }
-    } catch {
-      Swal.fire("Error", "Terjadi kesalahan pada server", "error");
+    } catch (error) {
+      //ambil pesan dari BE, nis salah atau pwd salah
+      const pesanDariBE = error.response?.data?.message || "Terjadi kesalahan pada server";
+
+      Swal.fire({
+        icon: "error",
+        title: "Login Gagal ❌",
+        text: pesanDariBE,
+        confirmButtonColor: "#10b981",
+      });
     } finally {
       setLoading(false);
     }
