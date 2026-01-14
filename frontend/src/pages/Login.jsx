@@ -38,7 +38,7 @@ export default function Login() {
           icon: "error",
           title: "Oops!",
           text: data.message || "NIS atau Password salah",
-          confirmButtonColor: "#10b981",
+          confirmButtonColor: "#ef4444",
         });
       }
     } catch (error) {
@@ -49,7 +49,7 @@ export default function Login() {
         icon: "error",
         title: "Login Gagal ❌",
         text: pesanDariBE,
-        confirmButtonColor: "#10b981",
+        confirmButtonColor: "#ef4444",
       });
     } finally {
       setLoading(false);
