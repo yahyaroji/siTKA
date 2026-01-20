@@ -88,11 +88,15 @@ export const getSoalBySession = async (req, res) => {
   // console.log("MASUK getSoalByIdSession BE");
   try {
     const { sessionId } = req.params;
-
-    const session = await ExamSession.findById(sessionId);
+    //siapa yang klik mulai ujian
+    const session = await ExamSession.findById(sessionId).populate("user", "nama_lengkap");
     if (!session) {
       return res.status(404).json({ message: "Session tidak ditemukan" });
     }
+
+    // Sekarang kamu bisa mengambil nama asli dari objek user hasil populate
+    const namaSiswa = session.user?.nama_lengkap || "Siswa";
+    console.log(`[EXAM] ${namaSiswa}  sedang memuat soal`);
 
     // ambil soal sesuai urutan session
     const soal = await Exam.find({
@@ -113,13 +117,17 @@ export const getSoalBySession = async (req, res) => {
         opsi: q.opsi,
       }));
 
+    // Log saat soal berhasil dikirim (Opsional, tapi bagus untuk monitoring trafik)
+    console.log(`[EXAM] Success: ${orderedSoal.length} soal terkirim ke ${namaSiswa}`);
+
     res.json({
       sessionId,
       expiresAt: session.expiresAt,
       soal: orderedSoal,
     });
   } catch (err) {
-    console.error("GET SOAL SESSION ERROR:", err);
+    // Log error di sini sangat penting karena ini adalah kegagalan sistem
+    console.error(`[CRITICAL] GET SOAL ERROR ${namaSiswa}:`, err.message);
     res.status(500).json({ message: "Gagal memuat soal ujian" });
   }
 };
@@ -134,13 +142,16 @@ export const submitExam = async (req, res) => {
     }
 
     // 1. Ambil session
-    const session = await ExamSession.findById(sessionId);
+    const session = await ExamSession.findById(sessionId).populate("user", "nama_lengkap");
     if (!session) {
       return res.status(404).json({ message: "Session tidak ditemukan" });
     }
-    // console.log(req.body.sessionId);
+    // i. Log Identitas Awal (Ambil nama/NIS dari req.user hasil middleware)
+    const userLog = session.user.nama_lengkap || "Unknown";
+    console.log(`[SUBMIT_START] ${userLog}`);
 
     if (session.status === "finished") {
+      console.log(`[SUBMIT_REJECT] ${userLog}`);
       return res.status(400).json({ message: "Ujian sudah disubmit" });
     }
 
@@ -227,6 +238,9 @@ export const submitExam = async (req, res) => {
       totalRasioBenar += rasioSoalIni;
     });
 
+    // ii. Log Hasil Kalkulasi (Sangat penting untuk audit)
+    console.log(`[SUBMIT_CALC_DONE] ${userLog}`);
+
     // 4. Hitung nilai per mapel skala 100 (1 angka di belakang koma)
     const nilaiPerMapel = {
       bi: mapelStat.bi.total === 0 ? 0 : parseFloat(((mapelStat.bi.benar / mapelStat.bi.total) * 100).toFixed(1)),
@@ -275,6 +289,8 @@ export const submitExam = async (req, res) => {
     session.finishedAt = new Date();
     await session.save();
 
+    // 3. Log Sukses Akhir
+    console.log(`[SUBMIT_SUCCESS] ${userLog}`);
     res.json({
       message: "Ujian berhasil disubmit",
       skor,
@@ -283,7 +299,7 @@ export const submitExam = async (req, res) => {
       resultId: result._id,
     });
   } catch (err) {
-    console.error(err);
+    console.error(`[SUBMIT_ERROR] ${userLog} - Pesan: ${err.message}`);
     res.status(500).json({ message: "Gagal submit ujian" });
   }
 };
