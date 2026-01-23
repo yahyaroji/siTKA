@@ -360,13 +360,15 @@ export default function UjianPage() {
 
   //handler format
   const formatTime = (seconds) => {
-    if (seconds === null || seconds < 0) return "00:00";
+    if (seconds === null || seconds < 0) return { h: 0, m: 0, s: 0 };
 
-    const m = Math.floor(seconds / 60);
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
 
-    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    return { h, m, s };
   };
+  const { h, m, s } = formatTime(timeLeft);
 
   return (
     <div className="min-h-screen bg-base-200 p-4 md:p-8 font-sans">
@@ -377,11 +379,45 @@ export default function UjianPage() {
           <div className="flex justify-between items-center bg-base-100 p-4 rounded-xl shadow-sm border border-base-300">
             <div>
               <h1 className="text-xl font-bold text-emerald-800">{q?.mapel === "bi" ? "Bahasa Indonesia" : "Matematika"}</h1>
-              <p className="text-sm opacity-60">Yakin aja, kamu pasti bisa</p>
+              {/* <p className="text-sm opacity-60">Yakin aja, kamu pasti bisa</p> */}
+              <span className="text-rotate text-sm opacity-70 font-bold flex gap-1">
+                <span className="justify-items-left">
+                  <span className="text-emerald-600">Tahap: {q.stage}</span>
+                  <span>Gas..</span>
+                  <span>Terus..</span>
+                  <span>Jangan..</span>
+                  <span>Kasih..</span>
+                  <span>Kendor..</span>
+                </span>
+                <span></span>
+                {/* <span className="badge badge-warning font-bold"> Tahap: {q.stage}</span> */}
+              </span>
             </div>
-            <div className={`text-right ${timeLeft <= 60 ? "text-error animate-pulse" : "text-base-content"}`}>
-              <span className="text-xs uppercase font-bold block">Sisa Waktu</span>
-              <span className="text-2xl font-mono font-bold">{formatTime(timeLeft)}</span>
+
+            <div className={`grid grid-flow-col gap-3 text-center auto-cols-max justify-end ${timeLeft <= 60 ? "animate-pulse" : ""}`}>
+              {/* Box Jam */}
+              <div className={`flex flex-col p-2 rounded-box items-center shadow-sm ${timeLeft <= 60 ? "bg-error text-error-content" : "bg-primary text-primary-content"}`}>
+                <span className="countdown font-mono text-2xl font-bold">
+                  <span style={{ "--value": h }}></span>
+                </span>
+                <span className="text-[10px] font-bold opacity-80">HRS</span>
+              </div>
+
+              {/* Box Menit */}
+              <div className={`flex flex-col p-2 rounded-box items-center shadow-sm ${timeLeft <= 60 ? "bg-error text-error-content" : "bg-primary text-primary-content"}`}>
+                <span className="countdown font-mono text-2xl font-bold">
+                  <span style={{ "--value": m }}></span>
+                </span>
+                <span className="text-[10px] font-bold opacity-80">MIN</span>
+              </div>
+
+              {/* Box Detik */}
+              <div className={`flex flex-col p-2 rounded-box items-center shadow-sm ${timeLeft <= 60 ? "bg-error text-error-content" : "bg-primary text-primary-content"}`}>
+                <span className="countdown font-mono text-2xl font-bold">
+                  <span style={{ "--value": s }}></span>
+                </span>
+                <span className="text-[10px] font-bold opacity-80">SEC</span>
+              </div>
             </div>
           </div>
 

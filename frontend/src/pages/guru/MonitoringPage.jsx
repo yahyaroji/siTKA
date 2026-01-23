@@ -85,9 +85,26 @@ export default function MonitoringPage() {
               si<span className="text-emerald-600">TKA</span>
             </h1>
           </div>
-          <p className="text-[11px] font-bold text-emerald-900/60 tracking-[0.15em] uppercase mt-1.5 ml-1">Update Skor, Gak Pake Telat</p>
-        </div>
 
+          {/* Nama Sekolah - Dibuat Bold & Rapi */}
+          <div className="flex flex-col mt-1.5 ml-1">
+            <p className="text-[10px] font-black text-emerald-800 tracking-[0.1em] uppercase leading-none">SMA DIPONEGORO TULUNGAGUNG</p>
+            <p className="text-[9px] font-medium text-emerald-900/40 tracking-[0.2em] uppercase mt-1">Update Skor, Gak Pake Telat</p>
+          </div>
+        </div>
+        {/* TENGAH */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center h-full">
+          <div className="flex flex-col items-center animate-bounce">
+            {/* Label kecil biar pro */}
+            {/* <span className="text-[9px] font-black text-emerald-800/30 tracking-[0.4em] uppercase mb-1">Sedang Berlangsung</span> */}
+            {/* Teks Utama */}
+            <div className="bg-emerald-100/50 px-4 py-1 rounded-full border border-emerald-200 shadow-sm">
+              <h2 className="text-xl font-black text-emerald-950 tracking-wider uppercase">
+                Penyisihan <span className="text-emerald-600">Tahap {stage}</span>
+              </h2>
+            </div>
+          </div>
+        </div>
         {/* KANAN */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-6 bg-emerald-50 px-6 py-3 rounded-2xl border border-emerald-200">
