@@ -131,6 +131,8 @@ export default function UjianPage() {
   const submitExam = async () => {
     if (!sessionId) return;
 
+    handleNavigasi(current);
+
     // 1. Tampilkan Konfirmasi Dulu
     const confirm = await Swal.fire({
       title: "Yakin udah selesai?",
@@ -243,6 +245,38 @@ export default function UjianPage() {
 
       return ans !== undefined && ans !== null && ans !== "";
     });
+
+  //FITUR LIVE SCORE
+  const handleNavigasi = (target) => {
+    // 1. Ambil data soal yang sedang aktif SEKARANG (sebelum pindah)
+    const soalAktif = soal[current];
+    if (soalAktif) {
+      const idSoal = soalAktif._id;
+      const isiJawaban = jawaban[idSoal];
+
+      // 2. Lapor ke server (Live Sync)
+      if (isiJawaban !== undefined) {
+        api
+          .patch("/exam/sync-live", {
+            sessionId,
+            soalId: idSoal,
+            jawabanUserSingle: isiJawaban,
+          })
+          .catch(() => console.log("Sync silent..."));
+      }
+    }
+
+    // 3. Tentukan pindah ke mana
+    if (target === "next") {
+      setCurrent((c) => c + 1);
+    } else if (target === "prev") {
+      setCurrent((c) => c - 1);
+    } else {
+      // Jika target adalah angka (dari board navigasi)
+      setCurrent(target);
+    }
+  };
+  //END ITUR LIVE SCORE
 
   // END VALIDASI TOMBOL SUBMIT
 
@@ -531,7 +565,7 @@ export default function UjianPage() {
 
           {/* Navigasi Prev/Next */}
           <div className="flex justify-between gap-4">
-            <button disabled={current === 0} onClick={() => setCurrent((c) => c - 1)} className="btn btn-outline btn-primary px-8">
+            <button disabled={current === 0} onClick={() => handleNavigasi("prev")} className="btn btn-outline btn-primary px-8">
               ← Prev
             </button>
 
@@ -551,7 +585,7 @@ export default function UjianPage() {
               </div>
             </div>
 
-            <button disabled={current === soal.length - 1} onClick={() => setCurrent((c) => c + 1)} className="btn btn-primary px-10 text-white shadow-md">
+            <button disabled={current === soal.length - 1} onClick={() => handleNavigasi("next")} className="btn btn-primary px-10 text-white shadow-md">
               Next →
             </button>
           </div>
@@ -572,15 +606,16 @@ export default function UjianPage() {
                   return (
                     <button
                       key={i}
-                      onClick={() => setCurrent(i)}
+                      // GANTI DISINI: dari setCurrent(i) jadi handleNavigasi(i)
+                      onClick={() => handleNavigasi(i)}
                       className={`w-10 h-10 rounded-full text-xs font-bold border transition-all
-                      ${
-                        isAktif
-                          ? "bg-primary text-white border-primary ring-2 ring-primary ring-offset-2"
-                          : isSudahJawab
-                          ? "bg-emerald-500 text-white border-emerald-500"
-                          : "bg-base-100 text-base-content border-base-300 hover:border-primary"
-                      }`}
+        ${
+          isAktif
+            ? "bg-primary text-white border-primary ring-2 ring-primary ring-offset-2"
+            : isSudahJawab
+              ? "bg-emerald-500 text-white border-emerald-500"
+              : "bg-base-100 text-base-content border-base-300 hover:border-primary"
+        }`}
                     >
                       {i + 1}
                     </button>

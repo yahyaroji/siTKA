@@ -73,6 +73,48 @@ export default function DashboardSiswa() {
     doc.save(`Sertifikat_${namaSiswa}.pdf`);
   };
 
+  const downloadSertifikatTahap2 = (result) => {
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: "a4",
+    });
+
+    // Path gambar di folder public (tanpa kata public)
+    const imgData = "/template_sertif_stage2.png";
+
+    // 1. Background Template
+    doc.addImage(imgData, "PNG", 0, 0, 297, 210, undefined, "FAST");
+
+    // 2. Nama Siswa
+    const namaSiswa = profile?.nama_lengkap?.toUpperCase() || "";
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(27); // Ukuran font
+    doc.setTextColor(0, 0, 0); // Warna hitam pekat agar elegan
+
+    // Koordinat 148.5 adalah tengah-tengah kertas A4 Landscape
+    // Koordinat 118 adalah posisi tinggi
+    doc.text(namaSiswa, 148.5, 118, { align: "center" });
+
+    // NILAI BI DAN MTK
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+
+    // Ambil data dari state/props result kamu
+    const nilaiBI = result.nilaiPerMapel?.bi || 0;
+    const nilaiMTK = result.nilaiPerMapel?.mtk || 0;
+
+    //koordinat nilai (X,Y  )
+    // doc.text(`${nilaiBI}`, 159, 147.7);
+    // doc.text(`${nilaiMTK}`, 159, 153);
+    doc.text(`${nilaiBI}`, 163, 147.7, { align: "center" });
+    doc.text(`${nilaiMTK}`, 163, 153, { align: "center" });
+
+    // 3. Download
+    doc.save(`Sertifikat_${namaSiswa}.pdf`);
+  };
+
   const handleStart = async (stage) => {
     try {
       if (activeSession && activeSession.stage === stage) {
@@ -209,6 +251,7 @@ export default function DashboardSiswa() {
             activeSession={activeSession?.stage === 2 ? activeSession : null}
             onStart={() => handleStart(2)}
             disabledText={hasDoneStage(2) ? "Sudah dikerjakan" : "Belum Dibuka 🔒"}
+            onDownload={downloadSertifikatTahap2}
           />
 
           <StageCard
@@ -266,7 +309,7 @@ function StageCard({ stage, title, result, enabled, onStart, disabledText, activ
                 </div>
               </div>
               {/* TOMBOL DOWNLOAD (Hanya muncul jika Stage 1 selesai) */}
-              {stage === 1 && (
+              {(Number(stage) === 1 || Number(stage) === 2) && (
                 <button onClick={() => onDownload(result)} className="mt-3 btn btn-xs btn-outline btn-emerald text-emerald-700 normal-case">
                   📜 Unduh Sertifikat
                 </button>

@@ -9,6 +9,7 @@ import DashboardSiswa from "./pages/siswa/DashboardSiswa";
 import UjianPage from "./pages/siswa/UjianPage";
 
 import DashboardGuru from "./pages/guru/DashboardGuru";
+import MonitoringPage from "./pages/guru/MonitoringPage";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
@@ -52,6 +53,14 @@ export default function App() {
             element={
               <ProtectedRoute role="guru">
                 <DashboardGuru />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guru/monitoring"
+            element={
+              <ProtectedRoute role="guru">
+                <MonitoringPage />
               </ProtectedRoute>
             }
           />

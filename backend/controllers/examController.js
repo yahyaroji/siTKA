@@ -328,3 +328,222 @@ export const getActiveSession = async (req, res) => {
     res.status(500).json({ message: "Gagal cek sesi aktif" });
   }
 };
+
+// fitur live score
+export const syncLiveProgress = async (req, res) => {
+  try {
+    const { sessionId, soalId, jawabanUserSingle } = req.body;
+
+    if (!sessionId || !soalId) {
+      return res.status(400).json({ message: "Data tidak lengkap" });
+    }
+
+    // 1. Ambil Kunci Jawaban (Hanya soal yang sedang dikerjakan)
+    const q = await Exam.findById(soalId).select("jawaban isMatrix multiple opsi mapel");
+    if (!q) return res.status(404).json({ message: "Soal tidak ditemukan" });
+
+    // 2. LOGIKA HITUNG SKOR (Persis seperti di submitExam)
+    let rasioSoalIni = 0;
+
+    if (q.isMatrix) {
+      // --- LOGIKA MATRIX ---
+      const kunci = q.jawaban || {};
+      const user = jawabanUserSingle || {};
+      const keys = Object.keys(kunci);
+      let subBenar = 0;
+      keys.forEach((key) => {
+        const valUser = String(user[key] || "")
+          .trim()
+          .toLowerCase();
+        const valKunci = String(kunci[key] || "")
+          .trim()
+          .toLowerCase();
+        if (valUser === valKunci) subBenar++;
+      });
+      rasioSoalIni = keys.length > 0 ? subBenar / keys.length : 0;
+    } else if (q.multiple) {
+      // --- LOGIKA MULTIPLE CHOICE ---
+      const kunciArr = q.jawaban || [];
+      const userArr = jawabanUserSingle || [];
+
+      // Proteksi: Jika pilih semua atau > 3, poin 0
+      if (userArr.length >= q.opsi.length || userArr.length > 3) {
+        rasioSoalIni = 0;
+      } else {
+        let benarCount = 0;
+        const lowKunci = kunciArr.map((k) => String(k).trim().toLowerCase());
+        userArr.forEach((val) => {
+          if (lowKunci.includes(String(val).trim().toLowerCase())) benarCount++;
+        });
+        rasioSoalIni = kunciArr.length > 0 ? Math.min(1, benarCount / kunciArr.length) : 0;
+      }
+    } else {
+      // --- PILIHAN GANDA BIASA ---
+      const valUser = String(jawabanUserSingle || "")
+        .trim()
+        .toLowerCase();
+      const valKunci = String(q.jawaban || "")
+        .trim()
+        .toLowerCase();
+      if (valUser === valKunci) rasioSoalIni = 1;
+    }
+
+    // 3. UPDATE KE EXAM SESSION (Atomic Update)
+    // Mencoba update jika soal sudah pernah dijawab sebelumnya
+    const updatedSession = await ExamSession.findOneAndUpdate(
+      {
+        _id: sessionId,
+        status: "ongoing",
+        "answers.soalId": soalId,
+      },
+      {
+        $set: {
+          "answers.$.jawaban": jawabanUserSingle,
+          "answers.$.rasio": rasioSoalIni,
+          "answers.$.mapel": q.mapel,
+          "answers.$.updatedAt": new Date(),
+        },
+      },
+      { new: true },
+    );
+
+    // 4. Jika soal belum pernah dijawab, tambahkan data baru ke array answers
+    if (!updatedSession) {
+      await ExamSession.findOneAndUpdate(
+        { _id: sessionId, status: "ongoing" },
+        {
+          $push: {
+            answers: {
+              soalId,
+              jawaban: jawabanUserSingle,
+              rasio: rasioSoalIni,
+              mapel: q.mapel,
+            },
+          },
+        },
+      );
+    }
+
+    res.json({ success: true, currentRatio: rasioSoalIni });
+  } catch (err) {
+    console.error(`[LIVE_SYNC_ERROR] ${err.message}`);
+    res.status(500).json({ message: "Gagal sinkronisasi live" });
+  }
+};
+
+export const getLiveMonitoring = async (req, res) => {
+  try {
+    const { stage } = req.query;
+
+    const monitoringData = await ExamSession.aggregate([
+      {
+        $match: {
+          stage: parseInt(stage) || 1,
+          status: { $in: ["ongoing", "finished"] },
+        },
+      },
+
+      // Konversi ID ke ObjectId agar Lookup tidak gagal
+      {
+        $addFields: {
+          soalOrderObj: {
+            $map: {
+              input: "$soalOrder",
+              as: "id",
+              in: { $toObjectId: "$$id" },
+            },
+          },
+        },
+      },
+
+      // Ambil Data User
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userData",
+        },
+      },
+      { $unwind: "$userData" },
+
+      // Ambil Data Soal menggunakan ID yang sudah dikonversi
+      {
+        $lookup: {
+          from: "exams",
+          localField: "soalOrderObj",
+          foreignField: "_id",
+          as: "soalLengkap",
+        },
+      },
+
+      {
+        $project: {
+          nama: "$userData.nama_lengkap",
+          status: "$status",
+          terjawab: { $size: { $ifNull: ["$answers", []] } },
+          totalSoal: { $size: "$soalOrder" },
+          lastActive: "$updatedAt",
+
+          // Hitung Total Soal BI & MTK sebagai pembagi
+          totalBI: {
+            $size: { $filter: { input: "$soalLengkap", as: "s", cond: { $eq: ["$$s.mapel", "bi"] } } },
+          },
+          totalMTK: {
+            $size: { $filter: { input: "$soalLengkap", as: "s", cond: { $eq: ["$$s.mapel", "mtk"] } } },
+          },
+
+          // Ambil poin dari answers yang sudah ada mapelnya
+          poinBI: {
+            $sum: {
+              $map: {
+                input: { $filter: { input: { $ifNull: ["$answers", []] }, as: "a", cond: { $eq: ["$$a.mapel", "bi"] } } },
+                as: "item",
+                in: "$$item.rasio",
+              },
+            },
+          },
+          poinMTK: {
+            $sum: {
+              $map: {
+                input: { $filter: { input: { $ifNull: ["$answers", []] }, as: "a", cond: { $eq: ["$$a.mapel", "mtk"] } } },
+                as: "item",
+                in: "$$item.rasio",
+              },
+            },
+          },
+        },
+      },
+
+      {
+        $project: {
+          nama: 1,
+          status: 1,
+          terjawab: 1,
+          totalSoal: 1,
+          lastActive: 1,
+          // Gunakan pembagi dinamis, jika totalBI/MTK belum terhitung (0), skor 0
+          nilaiBI: {
+            $cond: [{ $gt: ["$totalBI", 0] }, { $round: [{ $multiply: [{ $divide: ["$poinBI", "$totalBI"] }, 100] }, 1] }, 0],
+          },
+          nilaiMTK: {
+            $cond: [{ $gt: ["$totalMTK", 0] }, { $round: [{ $multiply: [{ $divide: ["$poinMTK", "$totalMTK"] }, 100] }, 1] }, 0],
+          },
+        },
+      },
+      {
+        $addFields: {
+          totalSkor: { $add: ["$nilaiBI", "$nilaiMTK"] },
+        },
+      },
+      { $sort: { totalSkor: -1 } },
+    ]);
+
+    res.json(monitoringData);
+  } catch (err) {
+    console.error("Error Monitoring:", err);
+    res.status(500).json({ message: "Gagal memproses data monitoring" });
+  }
+};
+
+// end fitur live score

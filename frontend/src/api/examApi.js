@@ -19,4 +19,9 @@ export const getActiveSession = async () => {
   return res.data;
 };
 
+//fitur live score
+export const syncLiveProgress = async (sessionId, soalId, jawabanUserSingle) => {
+  return await API.patch("/exam/sync-live", { sessionId, soalId, jawabanUserSingle });
+};
+
 export default API;
